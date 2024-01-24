@@ -1,0 +1,14 @@
+{
+  "name": "compspec-go Environment",
+  "dockerFile": "Dockerfile",
+  "context": "../",
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+    }
+  },
+  "postStartCommand": "git config --global --add safe.directory /workspaces/compspec-go"
+}
