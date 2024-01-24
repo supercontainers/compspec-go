@@ -21,10 +21,10 @@ func Run(args []string) error {
 	e := kernel.KernelExtractor{}
 	result, err := e.Extract(args)
 	if err != nil {
-		fmt.Println("There was a kernel extreaction error: %s", err)
+		fmt.Printf("There was a kernel extreaction error: %s\n", err)
 		return err
 	}
-
-	fmt.Println("Extraction has run: %s", result)
+	result.Print()
+	fmt.Println("Extraction has run!")
 	return nil
 }

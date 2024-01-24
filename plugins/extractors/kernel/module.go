@@ -86,11 +86,10 @@ func (m *Module) readParameterFile(name string) (string, error) {
 	if err != nil {
 		var pathErr *fs.PathError
 
-		// TODO how often does this happen?
+		// TODO how often does this happen? Skip for now
 		if errors.As(err, &pathErr) && pathErr.Err == unix.EPERM || pathErr.Err == unix.EACCES {
-			fmt.Printf("Error: cannot read parameter path because of EPERM and EACCES: %s\n", err)
+			fmt.Printf("Warning: cannot read parameter path because of EPERM and EACCES: %s\n", err)
 		}
-		return "", err
 	}
 	return strings.TrimSpace(string(content)), nil
 }

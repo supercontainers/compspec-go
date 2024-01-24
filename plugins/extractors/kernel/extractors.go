@@ -19,7 +19,7 @@ const (
 	kernelConfigPrefix = "/boot/config-"
 
 	// Directory with metadata about kernel modules (drivers/versions/params)!
-	kernelModules = "/sys/modules"
+	kernelModules = "/sys/module"
 )
 
 // getKernelBootParams loads parameters given to the kernel at boot time
