@@ -22,6 +22,7 @@ const (
 	versionDebianFile = "/etc/debian_version"
 	versionCentosFile = "/etc/centos-release"
 	versionRHELFile   = "/etc/redhat-release"
+	versionRockyFile  = "/etc/rocky-release"
 )
 
 var (
@@ -30,6 +31,7 @@ var (
 	regexVersion = regexp.MustCompile(`^VERSION_ID=(.*)$`)
 	regexUbuntu  = regexp.MustCompile(`[\( ]([\d\.]+)`)
 	regexCentos  = regexp.MustCompile(`^CentOS( Linux)? release ([\d\.]+)`)
+	regexRocky   = regexp.MustCompile(`^Rocky( Linux)? release ([\d\.]+)`)
 	regexRHEL    = regexp.MustCompile(`[\( ]([\d\.]+)`)
 	linkerPaths  = map[string]string{"amd64": linkerAMD64, "i386": linkeri386}
 )
@@ -111,6 +113,17 @@ func readOsRelease(prettyName string, vendor string) (string, error) {
 		match := regexCentos.FindStringSubmatch(string(raw))
 		if match != nil {
 			return match[2], nil
+		}
+	case "rocky":
+		raw, err := os.ReadFile(versionRockyFile)
+		if err != nil {
+			return "", err
+		}
+		match := regexRocky.FindStringSubmatch(string(raw))
+		if match != nil {
+			// Rocky Linux release 9.3 (Blue Onyx)
+			parts := strings.Split(match[2], " ")
+			return parts[0], nil
 		}
 	case "rhel":
 		raw, err := os.ReadFile(versionRHELFile)
