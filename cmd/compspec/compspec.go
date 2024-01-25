@@ -7,6 +7,7 @@ import (
 
 	"github.com/akamensky/argparse"
 	"github.com/supercontainers/compspec-go/cmd/compspec/extract"
+	"github.com/supercontainers/compspec-go/cmd/compspec/create"
 	"github.com/supercontainers/compspec-go/cmd/compspec/list"
 	"github.com/supercontainers/compspec-go/pkg/types"
 )
@@ -30,12 +31,14 @@ func main() {
 	versionCmd := parser.NewCommand("version", "See the version of compspec")
 	extractCmd := parser.NewCommand("extract", "Run one or more extractors")
 	listCmd := parser.NewCommand("list", "List plugins and known sections")
+	createCmd := parser.NewCommand("create", "Create a compatibility artifact for the current host according to a definition")
 
 	// Shared arguments (likely this will break into check and extract, shared for now)
 	pluginNames := parser.StringList("n", "name", &argparse.Options{Help: "One or more specific plugins to target names"})
 
 	// Extract arguments
 	filename := extractCmd.String("o", "out", &argparse.Options{Help: "Save extraction to json file"})
+	specname := createCmd.String("i", "in", &argparse.Options{Help: "Input yaml that contains spec for creation"})
 
 	// Now parse the arguments
 	err := parser.Parse(os.Args)
@@ -50,6 +53,8 @@ func main() {
 		if err != nil {
 			log.Fatalf("Issue with extraction: %s", err)
 		}
+	} else if createCmd.Happened() {
+		create.Run(*specname)	
 	} else if listCmd.Happened() {
 		list.Run(*pluginNames)
 	} else if versionCmd.Happened() {
