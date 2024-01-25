@@ -21,6 +21,29 @@ func SplitDelimiterList(items []string, delim string) (map[string]string, error)
 	return data, nil
 }
 
+// ArrayContainsString determines if a string is in an array
+// We return an array of invalid names in case the calling function needs
+func StringArrayIsSubset(contenders, items []string) ([]string, bool) {
+
+	validSet := map[string]bool{}
+	for _, item := range items {
+		validSet[item] = true
+	}
+
+	valid := true
+	invalids := []string{}
+	for _, contender := range contenders {
+		_, ok := validSet[contender]
+
+		// This contender is not known
+		if !ok {
+			valid = false
+			invalids = append(invalids, contender)
+		}
+	}
+	return invalids, valid
+}
+
 // ParseConfigFile parses a simple configuration file, with newlines for each thing,
 // and a starting prefix to determine comma, and some other delimiter to determine
 // key value pairs

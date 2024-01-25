@@ -24,33 +24,11 @@ Specifically, I'll try to do simple interfaces (in [plugins](plugins)) to:
 The extraction step is also important, but likely this would happen at build time (maybe by another tool).
 For now (since this is a prototype) I'm going to just manually do it.
 
-### Limitations
-
- - I'm starting with just Linux. I know there are those "other" platforms, but if it doesn't run on HPC or Kubernetes easily I'm not super interested (ahem, Mac and Windows)!
- - not all extractors work in containers (e.g., kernel needs to be on the host)
-
-## TODO
-
- - extract should take a list of extractors, manual for now
- - each extractor should also expose sections to extract (e.g. kernel modules vs cmdline vs config)
- - likely we want a common configuration file to take an extraction -> check recipe
- - need to develop check plugin family
- - todo thinking around manifest.yaml that has listing of images / artifacts
-
-### Extractors wanted / needed
-
-A `*` indicates required for the work / prototype I want to do
-
- - power usage data [valorium](https://ipo.llnl.gov/sites/default/files/2023-08/Final_variorum-rnd-100-award.pdf)
- - * architecture [archspec](https://github.com/archspec)
- - * MPI existence / variants
- - * operating system stuff
- - ... please add more!
-
 ## Usage
 
-Note that there is a [developer environment](.devcontainer) that provides a consistent version of Go, etc.
-However, it won't work with all extractors. Build the `compspec` binary with:
+### Build
+
+Build the `compspec` binary with:
 
 ```bash
 make
@@ -66,12 +44,23 @@ This generates the `bin/compspec` that you can use:
 ┗┗┛┛┗┗┣┛┛┣┛┗ ┗
           ┛  ┛    
 
-Usage:
-  comspec version
-  comspec extract
+[sub]Command required
+usage: compspec <Command> [-h|--help] [-n|--name "<value>" [-n|--name "<value>"
+                ...]]
+
+                Compatibility checking for container images
+
+Commands:
+
+  version  See the version of compspec
+  extract  Run one or more extractors
+
+Arguments:
+
+  -h  --help  Print help information
+  -n  --name  One or more specific extractor plugin names
 ```
 
-More usage details will be added soon!
 
 ### Version
 
@@ -84,34 +73,120 @@ $ ./bin/compspec version
 
 I know, the star should not be there. Fight me.
 
+### List
+
+The list command lists each extractor, and sections available for it.
+
+**coming soon**
+
+
 ### Extract
 
-Right now I've just implemented basic kernel stuffs, and I'm too afraid to use sudo :)
+If you want to extract metadata to your local machine, you can use extract! Either just run all extractors and dump to the terminal:
 
 ```bash
-$ ./bin/compspec extract
+# Not recommend, it's a lot!
+./bin/compspec extract
+```
+
+Or target a specific one:
+
+```bash
+./bin/compspec extract --name kernel
+```
+
+Better, save to json file:
+
+```bash
+./bin/compspec extract --name kernel -o test-kernel.json
+```
+
+This has a better structure for inspecting easily (only the top of the file is shown):
+
+<details>
+
+<summary>Kernel JSON output</summary>
+
+```json
+{
+  "extractors": {
+    "kernel": {
+      "sections": {
+        "boot": {
+          "BOOT_IMAGE": "/boot/vmlinuz-6.1.0-1028-oem",
+          "quiet": "",
+          "ro": "",
+          "root": "UUID",
+          "splash": "",
+          "vt.handoff": "7"
+        },
+        "config": {
+          "CONFIG_104_QUAD_8": "m",
+          "CONFIG_60XX_WDT": "m",
+          "CONFIG_64BIT": "y",
+          "CONFIG_6LOWPAN": "m"
+        }
+      }
+    }
+  }
+}
+```
+
+</details>
+
+An extractor is made up of sections, and you can ask for parsing just a specific one. 
+
+```bash
+./bin/compspec extract --name kernel[config]
 ```
 ```console
-   module.veth: 6.1.0-1028-oem
-   module.i915.parameter.enable_guc: 
-   module.snd_hda_intel.parameter.enable: Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y,Y
-   module.snd_seq.parameter.seq_default_timer_sclass: 0
-   module.spurious.parameter.irqfixup: 0
-   module.tcp_cubic.parameter.hystart_low_window: 16
-   module.btmtk: 0.1
-   module.mousedev.parameter.tap_time: 200
-   module.printk: 6.1.0-1028-oem
-   module.snd_seq_midi.parameter.output_buffer_size: 4096
-   module.xt_addrtype: 6.1.0-1028-oem
-   module.iwlwifi.parameter.enable_ini: 
-   module.kvm_intel.parameter.allow_smaller_maxphyaddr: N
-   module.wmi.parameter.debug_event: N
-   module.mac80211.parameter.beacon_loss_count: 7
-   module.nf_conntrack.parameter.acct: N
-   module.nvme.parameter.max_host_mem_size_mb: 128
-   module.uv_nmi.parameter.initial_delay: 100
+⭐️ Running extract...
+ --Result for kernel
+ -- Section boot
+   root: UUID
+   ro: 
+   quiet: 
+   splash: 
+   vt.handoff: 7
+   BOOT_IMAGE: /boot/vmlinuz-6.1.0-1028-oem
 Extraction has run!
 ```
+
+To ask for more than one, it's a comma separated list.
+
+```bash
+./bin/compspec extract --name kernel[config,boot]
+```
+
+The ordering of your list is honored.
+
+## Developer
+
+Note that there is a [developer environment](.devcontainer) that provides a consistent version of Go, etc.
+However, it won't work with all extractors.  Note that for any command that uses a plugin (e.g., `extract` and `check`)
+
+
+### Limitations
+
+ - I'm starting with just Linux. I know there are those "other" platforms, but if it doesn't run on HPC or Kubernetes easily I'm not super interested (ahem, Mac and Windows)!
+ - not all extractors work in containers (e.g., kernel needs to be on the host)
+
+## TODO
+
+ - likely we want a common configuration file to take an extraction -> check recipe
+ - need to develop check plugin family
+ - todo thinking around manifest.yaml that has listing of images / artifacts
+
+### Extractors wanted / needed
+
+A `*` indicates required for the work / prototype I want to do
+
+ - power usage data [valorium](https://ipo.llnl.gov/sites/default/files/2023-08/Final_variorum-rnd-100-award.pdf)
+ - * architecture [archspec](https://github.com/archspec)
+ - * MPI existence / variants
+ - * operating system stuff
+ - ... please add more!
+
 
 ## Thanks and Previous Art
 
