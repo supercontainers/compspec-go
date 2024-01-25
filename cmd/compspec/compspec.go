@@ -7,6 +7,7 @@ import (
 
 	"github.com/akamensky/argparse"
 	"github.com/supercontainers/compspec-go/cmd/compspec/extract"
+	"github.com/supercontainers/compspec-go/cmd/compspec/list"
 	"github.com/supercontainers/compspec-go/pkg/types"
 )
 
@@ -28,9 +29,12 @@ func main() {
 	parser := argparse.NewParser("compspec", "Compatibility checking for container images")
 	versionCmd := parser.NewCommand("version", "See the version of compspec")
 	extractCmd := parser.NewCommand("extract", "Run one or more extractors")
+	listCmd := parser.NewCommand("list", "List plugins and known sections")
+
+	// Shared arguments (likely this will break into check and extract, shared for now)
+	pluginNames := parser.StringList("n", "name", &argparse.Options{Help: "One or more specific plugins to target names"})
 
 	// Extract arguments
-	pluginNames := extractCmd.StringList("n", "name", &argparse.Options{Help: "One or more specific extractor plugin names"})
 	filename := extractCmd.String("o", "out", &argparse.Options{Help: "Save extraction to json file"})
 
 	// Now parse the arguments
@@ -46,7 +50,8 @@ func main() {
 		if err != nil {
 			log.Fatalf("Issue with extraction: %s", err)
 		}
-
+	} else if listCmd.Happened() {
+		list.Run(*pluginNames)
 	} else if versionCmd.Happened() {
 		RunVersion()
 	} else {

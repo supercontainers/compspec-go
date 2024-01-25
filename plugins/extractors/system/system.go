@@ -20,13 +20,15 @@ var (
 )
 
 type SystemExtractor struct {
-
-	// List of names sections to extract
 	sections []string
 }
 
 func (e SystemExtractor) Name() string {
 	return ExtractorName
+}
+
+func (e SystemExtractor) Sections() []string {
+	return e.sections
 }
 
 // Validate ensures that the sections provided are in the list we know

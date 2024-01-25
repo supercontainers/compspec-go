@@ -19,9 +19,11 @@ var (
 )
 
 type KernelExtractor struct {
-
-	// List of names sections to extract
 	sections []string
+}
+
+func (e KernelExtractor) Sections() []string {
+	return e.sections
 }
 
 func (c KernelExtractor) Name() string {
