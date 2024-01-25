@@ -1,10 +1,9 @@
 package system
 
 import (
-
-	// TODO this library is a bit old, but seems to do the job for now
 	"fmt"
 
+	// TODO this library is a bit old, but seems to do the job for now
 	linuxproc "github.com/c9s/goprocinfo/linux"
 	"github.com/supercontainers/compspec-go/pkg/extractor"
 )
