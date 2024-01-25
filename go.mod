@@ -3,6 +3,7 @@ module github.com/supercontainers/compspec-go
 go 1.20
 
 require (
+	github.com/akamensky/argparse v1.4.0
 	github.com/moby/moby v25.0.0+incompatible
 	golang.org/x/sys v0.16.0
 )

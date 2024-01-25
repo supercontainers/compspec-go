@@ -1,11 +1,11 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log"
 	"os"
 
+	"github.com/akamensky/argparse"
 	"github.com/supercontainers/compspec-go/cmd/compspec/extract"
 	"github.com/supercontainers/compspec-go/pkg/types"
 )
@@ -18,14 +18,10 @@ const (
 
 // I know this text is terrible, just having fun for now
 var (
-	Usage = `              
+	Header = `              
 ┏┏┓┏┳┓┏┓┏┏┓┏┓┏
 ┗┗┛┛┗┗┣┛┛┣┛┗ ┗
 	  ┛  ┛    
-
-Usage:
-  comspec version
-  comspec extract
 `
 )
 
@@ -34,29 +30,33 @@ func RunVersion() {
 }
 
 func main() {
-	flag.Parse()
-	args := flag.Args()
 
-	if len(args) < 1 {
-		fmt.Println(Usage)
-		os.Exit(1)
+	parser := argparse.NewParser("compspec", "Compatibility checking for container images")
+	versionCmd := parser.NewCommand("version", "See the version of compspec")
+	extractCmd := parser.NewCommand("extract", "Run one or more extractors")
+
+	// Extract arguments
+	pluginNames := parser.StringList("n", "name", &argparse.Options{Help: "One or more specific extractor plugin names"})
+	filename := extractCmd.String("o", "out", &argparse.Options{Help: "Save extraction to json file"})
+
+	// Now parse the arguments
+	err := parser.Parse(os.Args)
+	if err != nil {
+		fmt.Println(Header)
+		fmt.Println(parser.Usage(err))
+		return
 	}
 
-	// use cobra / pflags instead?
-	cmd := args[0]
-	cmdArgs := args[1:]
-
-	switch cmd {
-	case VersionCommand:
-		RunVersion()
-		break
-	case ExtractCommand:
-		err := extract.Run(cmdArgs)
+	if extractCmd.Happened() {
+		err := extract.Run(*filename, *pluginNames)
 		if err != nil {
 			log.Fatalf("Issue with extraction: %s", err)
 		}
-		break
-	default:
-		log.Fatalf("😱️ Invalid command: %s", cmd)
+
+	} else if versionCmd.Happened() {
+		RunVersion()
+	} else {
+		fmt.Println(Header)
+		fmt.Println(parser.Usage(nil))
 	}
 }
