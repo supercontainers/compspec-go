@@ -10,12 +10,6 @@ import (
 	"github.com/supercontainers/compspec-go/pkg/types"
 )
 
-// Command names
-const (
-	VersionCommand = "version"
-	ExtractCommand = "extract"
-)
-
 // I know this text is terrible, just having fun for now
 var (
 	Header = `              
