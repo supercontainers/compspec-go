@@ -4,6 +4,7 @@ go 1.20
 
 require (
 	github.com/akamensky/argparse v1.4.0
+	github.com/c9s/goprocinfo v0.0.0-20210130143923-c95fcf8c64a8
 	github.com/moby/moby v25.0.0+incompatible
 	golang.org/x/sys v0.16.0
 )

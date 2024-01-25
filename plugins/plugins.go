@@ -4,11 +4,14 @@ import (
 	"strings"
 
 	"github.com/supercontainers/compspec-go/plugins/extractors/kernel"
+	"github.com/supercontainers/compspec-go/plugins/extractors/system"
 )
 
 // Add new plugin names here. They should correspond with the package name, then NewPlugin()
 var (
-	pluginNames = []string{"kernel"}
+	KernelExtractor = "kernel"
+	SystemExtractor = "system"
+	pluginNames     = []string{KernelExtractor, SystemExtractor}
 )
 
 // parseSections will return sections from the name string
@@ -44,14 +47,24 @@ func GetPlugins(names []string) (PluginsRequest, error) {
 	request := PluginsRequest{}
 
 	// Prepare an extractor for each, and validate the requested sections
-	// This could also be done with an init -> Register pattern
+	// TODO: this could also be done with an init -> Register pattern
 	for _, name := range names {
 
 		// If we are given a list of section names, parse.
 		name, sections := parseSections(name)
 
-		if strings.HasPrefix(name, "kernel") {
+		if strings.HasPrefix(name, KernelExtractor) {
 			p, err := kernel.NewPlugin(sections)
+			if err != nil {
+				return request, err
+			}
+			// Save the name, the instantiated interface, and sections
+			pr := PluginRequest{Name: name, Extractor: p, Sections: sections}
+			request = append(request, pr)
+		}
+
+		if strings.HasPrefix(name, SystemExtractor) {
+			p, err := system.NewPlugin(sections)
 			if err != nil {
 				return request, err
 			}
