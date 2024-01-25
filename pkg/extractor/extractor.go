@@ -13,6 +13,7 @@ type Extractor interface {
 	Name() string
 	Extract(interface{}) (ExtractorData, error)
 	Validate() bool
+	Sections() []string
 }
 
 // ExtractorData is returned by an extractor

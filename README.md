@@ -77,8 +77,21 @@ I know, the star should not be there. Fight me.
 
 The list command lists each extractor, and sections available for it.
 
-**coming soon**
+```bash
+$ ./bin/compspec list
+```
+```console
+ Compatibility Plugins              
+        TYPE      NAME    SECTION   
+        extrator  kernel  boot      
+        extrator  kernel  config    
+        extrator  kernel  modules   
+        extrator  system  cpu       
+        extrator  system  processor 
+ TOTAL  5                           
+```
 
+Note that we will eventually add a description column - it's not really warranted yet!
 
 ### Extract
 
