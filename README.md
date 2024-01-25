@@ -81,15 +81,16 @@ The list command lists each extractor, and sections available for it.
 $ ./bin/compspec list
 ```
 ```console
- Compatibility Plugins              
-        TYPE      NAME    SECTION   
-        extrator  kernel  boot      
-        extrator  kernel  config    
-        extrator  kernel  modules   
-        extrator  system  cpu       
-        extrator  system  processor 
-        extrator  system  os        
- TOTAL  6
+ Compatibility Plugins               
+        TYPE      NAME     SECTION   
+        extrator  kernel   boot      
+        extrator  kernel   config    
+        extrator  kernel   modules   
+        extrator  system   cpu       
+        extrator  system   processor 
+        extrator  system   os        
+        extrator  library  mpi       
+ TOTAL  7                            
 ```
 
 Note that we will eventually add a description column - it's not really warranted yet!
