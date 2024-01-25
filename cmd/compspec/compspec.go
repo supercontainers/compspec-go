@@ -30,7 +30,7 @@ func main() {
 	extractCmd := parser.NewCommand("extract", "Run one or more extractors")
 
 	// Extract arguments
-	pluginNames := parser.StringList("n", "name", &argparse.Options{Help: "One or more specific extractor plugin names"})
+	pluginNames := extractCmd.StringList("n", "name", &argparse.Options{Help: "One or more specific extractor plugin names"})
 	filename := extractCmd.String("o", "out", &argparse.Options{Help: "Save extraction to json file"})
 
 	// Now parse the arguments
