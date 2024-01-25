@@ -88,7 +88,8 @@ $ ./bin/compspec list
         extrator  kernel  modules   
         extrator  system  cpu       
         extrator  system  processor 
- TOTAL  5                           
+        extrator  system  os        
+ TOTAL  6
 ```
 
 Note that we will eventually add a description column - it's not really warranted yet!
@@ -206,6 +207,10 @@ A `*` indicates required for the work / prototype I want to do
 - I learned about kernel parsing from [mfranczy/compat](https://github.com/mfranczy/compat)
 
 ## License
+
+This repository contains code derived from [sysinfo](https://github.com/zcalusic/sysinfo/tree/30169cfb37112a562cbf9133494a323764ad852c)
+that was released also under an [MIT License](.github/LICENSE-SYSINFO). The library in question exposed needed functionality under a private
+interface and required sudo for extra functionality that we did not need.
 
 HPCIC DevTools is distributed under the terms of the MIT license.
 All new contributions must be made under this license.

@@ -13,10 +13,11 @@ const (
 	// Just cores, etc.
 	CPUSection       = "cpu"
 	ProcessorSection = "processor"
+	OsSection        = "os"
 )
 
 var (
-	validSections = []string{CPUSection, ProcessorSection}
+	validSections = []string{CPUSection, ProcessorSection, OsSection}
 )
 
 type SystemExtractor struct {
@@ -61,6 +62,13 @@ func (e SystemExtractor) Extract(interface{}) (extractor.ExtractorData, error) {
 				return data, err
 			}
 			sections[ProcessorSection] = section
+		}
+		if name == OsSection {
+			section, err := getOsInformation()
+			if err != nil {
+				return data, err
+			}
+			sections[OsSection] = section
 		}
 	}
 	data.Sections = sections

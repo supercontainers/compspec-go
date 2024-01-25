@@ -2,9 +2,23 @@ package utils
 
 import (
 	"bufio"
+	"errors"
+	"fmt"
 	"os"
 	"strings"
 )
+
+// FileExists determines if a file exists
+func FileExists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			return false, nil
+		}
+		return true, fmt.Errorf("warning: file exists but another error happened (debug): %s", err)
+	}
+	return true, nil
+}
 
 // SplitDelimiterList splits a list of items by an additional delimiter
 func SplitDelimiterList(items []string, delim string) (map[string]string, error) {
