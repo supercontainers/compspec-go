@@ -38,7 +38,7 @@ jobs:
           tag_name: ${{ env.tag }}
           body: "compspec-go release ${{ env.tag }}"
           files: |
-            bin/compsec
+            bin/compspec
             bin/compspec-arm
             bin/compspec-ppc
         env:
