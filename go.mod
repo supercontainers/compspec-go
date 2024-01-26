@@ -8,6 +8,7 @@ require (
 	github.com/jedib0t/go-pretty/v6 v6.5.3
 	github.com/moby/moby v25.0.0+incompatible
 	golang.org/x/sys v0.16.0
+	sigs.k8s.io/yaml v1.4.0
 )
 
 require (

@@ -9,7 +9,7 @@ The compatibility tool is responsible for extracting information about a system,
 
 ### Extractor
 
-An **extractor** is a core plugin that knows how to retrieve metadata about a host. An extractor is ususally going to be run for two cases:
+An **extractor** is a core plugin that knows how to retrieve metadata about a host. An extractor is usually going to be run for two cases:
 
 1. During CI to extract (and save) metadata about a particular build to put in a compatibility artifact.
 2. During image selection to extract information about the host to compare to.

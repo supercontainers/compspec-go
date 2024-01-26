@@ -23,7 +23,7 @@ func (r *PluginsRequest) List() error {
 	for _, p := range *r {
 		for _, section := range p.Extractor.Sections() {
 			count += 1
-			t.AppendRow([]interface{}{"", "extrator", p.Name, section})
+			t.AppendRow([]interface{}{"", "extractor", p.Name, section})
 		}
 	}
 	t.AppendSeparator()

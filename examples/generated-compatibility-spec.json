@@ -1,0 +1,34 @@
+{
+  "version": "0.0.0",
+  "kind": "CompatibilitySpec",
+  "metadata": {
+    "name": "lammps-prototype",
+    "jsonSchema": "https://raw.githubusercontent.com/supercontainers/compspec/main/supercontainers/compspec.json"
+  },
+  "compatibilities": [
+    {
+      "name": "org.supercontainers.mpi",
+      "version": "0.0.0",
+      "annotations": {
+        "implementation": "mpich",
+        "version": "4.1.1"
+      }
+    },
+    {
+      "name": "org.supercontainers.hardware.gpu",
+      "version": "0.0.0",
+      "annotations": {
+        "available": "yes"
+      }
+    },
+    {
+      "name": "io.archspec.cpu",
+      "version": "0.0.0",
+      "annotations": {
+        "model": "13th Gen Intel(R) Core(TM) i5-1335U",
+        "target": "amd64",
+        "vendor": "GenuineIntel"
+      }
+    }
+  ]
+}

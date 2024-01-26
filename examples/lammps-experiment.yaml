@@ -2,7 +2,7 @@
 # using a set of extractors.
 
 # verison of compspec-go we are using
-version: 0.0.0
+version: "0.0.0"
 kind: CompatibilitySpec
 metadata:
   name: lammps-prototype
@@ -12,25 +12,25 @@ metadata:
 
 # These are not values, but mappings, from an extractor into the compspec we want
 compatibilities:
-  org.supercontainers.mpi: 
-    version: 0.0.0
-    annotations:
-      implementation: library.mpi.variant
-      version: library.mpi.version
+- name: "org.supercontainers.mpi" 
+  version: "0.0.0"
+  annotations:
+    implementation: library.mpi.variant
+    version: library.mpi.version
 
-  # This is an example of a custom metadata attribute provided by the user (commandline)
-  # It can override an actual attribute, or just be random / new, -o custom.gpu.available=yes
-  org.supercontainers.hardware.gpu: 
-    version: 0.0.0
-    annotations:
-      available: custom.gpu.available
+# This is an example of a custom metadata attribute provided by the user (commandline)
+# It can override an actual attribute, or just be random / new, -o custom.gpu.available=yes
+- name: "org.supercontainers.hardware.gpu"
+  version: "0.0.0"
+  annotations:
+    available: custom.gpu.available
 
-  # Note that for now we are using the processor in index 0 to represent all
-  # I'm not sure about cases where this set isn't homogeneous!
-  # Since target is part of the container build, we will provide it
-  io.archspec.cpu:
-    version: 0.0.0
-    annotations:
-      model: system.processor.0.model
-      target: system.os.arch
-      vendor: system.processor.0.vendor
+# Note that for now we are using the processor in index 0 to represent all
+# I'm not sure about cases where this set isn't homogeneous!
+# Since target is part of the container build, we will provide it
+- name: "io.archspec.cpu"
+  version: "0.0.0"
+  annotations:
+    model: system.processor.0.model
+    target: system.arch.name
+    vendor: system.processor.0.vendor

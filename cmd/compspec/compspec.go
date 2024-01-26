@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"github.com/akamensky/argparse"
-	"github.com/supercontainers/compspec-go/cmd/compspec/extract"
 	"github.com/supercontainers/compspec-go/cmd/compspec/create"
+	"github.com/supercontainers/compspec-go/cmd/compspec/extract"
 	"github.com/supercontainers/compspec-go/cmd/compspec/list"
 	"github.com/supercontainers/compspec-go/pkg/types"
 )
@@ -38,7 +38,11 @@ func main() {
 
 	// Extract arguments
 	filename := extractCmd.String("o", "out", &argparse.Options{Help: "Save extraction to json file"})
-	specname := createCmd.String("i", "in", &argparse.Options{Help: "Input yaml that contains spec for creation"})
+
+	// Create arguments
+	options := parser.StringList("a", "append", &argparse.Options{Help: "One or more custom metadata fields to append"})
+	specname := createCmd.String("i", "in", &argparse.Options{Required: true, Help: "Input yaml that contains spec for creation"})
+	specfile := createCmd.String("o", "out", &argparse.Options{Help: "Save compatibility json artifact to this file"})
 
 	// Now parse the arguments
 	err := parser.Parse(os.Args)
@@ -51,12 +55,18 @@ func main() {
 	if extractCmd.Happened() {
 		err := extract.Run(*filename, *pluginNames)
 		if err != nil {
-			log.Fatalf("Issue with extraction: %s", err)
+			log.Fatalf("Issue with extraction: %s\n", err)
 		}
 	} else if createCmd.Happened() {
-		create.Run(*specname)	
+		err := create.Run(*specname, *options, *specfile)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	} else if listCmd.Happened() {
-		list.Run(*pluginNames)
+		err := list.Run(*pluginNames)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	} else if versionCmd.Happened() {
 		RunVersion()
 	} else {
