@@ -132,6 +132,12 @@ a build will generate it for that context. We would want to save this to file:
 And that's it! We would next (likely during CI) push this compatibility artifact to a URI that is likely (TBA) linked to the image.
 For now we will manually remember the pairing, at least until the compatibility working group figures out the final design!
 
+## Check
+
+Check is the command you would use to check a potential host against one or more existing artifacts.
+For a small experiment of using create against a set of containers and then testing how to do a check, we are going to place content
+in [examples/check-lammps](examples/check-lammps).
+
 ## Extract
 
 Extraction has two use cases, and likely you won't be running this manually, but within the context of another command:
