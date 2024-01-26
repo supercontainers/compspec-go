@@ -24,9 +24,9 @@ func getCPUInformation() (extractor.ExtractorSection, error) {
 
 	// Manually set summary metrics
 	// We need a good definition for these,
-	info["cpu.logical.cpus"] = fmt.Sprintf("%d", stat.NumCPU())
-	info["cpu.physical.cpus"] = fmt.Sprintf("%d", stat.NumPhysicalCPU())
-	info["cpu.cores"] = fmt.Sprintf("%d", stat.NumCore())
+	info["logical.cpus"] = fmt.Sprintf("%d", stat.NumCPU())
+	info["physical.cpus"] = fmt.Sprintf("%d", stat.NumPhysicalCPU())
+	info["cores"] = fmt.Sprintf("%d", stat.NumCore())
 	return info, nil
 }
 
@@ -41,7 +41,7 @@ func getProcessorInformation() (extractor.ExtractorSection, error) {
 
 	// Create features for each processor. Note we might want to separate this into a separate
 	for _, s := range stat.Processors {
-		uid := fmt.Sprintf("processor.%d.", s.CoreId)
+		uid := fmt.Sprintf("%d.", s.CoreId)
 		info[uid+"cachesize"] = fmt.Sprintf("%d", s.CacheSize)
 		info[uid+"cores"] = fmt.Sprintf("%d", s.Cores)
 		info[uid+"model"] = fmt.Sprintf("%d", s.Model)

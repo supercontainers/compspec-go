@@ -12,12 +12,9 @@ import (
 	"strings"
 
 	"github.com/supercontainers/compspec-go/pkg/extractor"
-	"github.com/supercontainers/compspec-go/pkg/utils"
 )
 
 const (
-	linkerAMD64       = "/lib64/ld-linux-x86-64.so.2"
-	linkeri386        = "/lib/ld-linux.so.2"
 	osReleaseFile     = "/etc/os-release"
 	versionDebianFile = "/etc/debian_version"
 	versionCentosFile = "/etc/centos-release"
@@ -33,33 +30,17 @@ var (
 	regexCentos  = regexp.MustCompile(`^CentOS( Linux)? release ([\d\.]+)`)
 	regexRocky   = regexp.MustCompile(`^Rocky( Linux)? release ([\d\.]+)`)
 	regexRHEL    = regexp.MustCompile(`[\( ]([\d\.]+)`)
-	linkerPaths  = map[string]string{"amd64": linkerAMD64, "i386": linkeri386}
 )
 
-// getOSArch determines arch based on the ld linux path
-func getOsArch() (string, error) {
+// readOsRelease gets the name, version, and vendor from the os release file
+func parseOsRelease() (string, string, string, error) {
 
-	// Detect OS architecture based on presence of this file
-	for arch, path := range linkerPaths {
-		exists, err := utils.FileExists(path)
-		if err != nil {
-			return "", err
-		}
-		if exists {
-			return arch, nil
-		}
-	}
-	return "", fmt.Errorf("cannot find architecture based on linker file")
-}
-
-// addOsRelease adds in metadata fields from the os release file
-
-func addOsRelease(info *extractor.ExtractorSection) error {
+	var name, version, vendor string
 
 	// Determine OS release by reading this file
 	f, err := os.Open(osReleaseFile)
 	if err != nil {
-		return fmt.Errorf("cannot find %s to determine OS metadata and release", osReleaseFile)
+		return name, version, vendor, fmt.Errorf("cannot find %s to determine OS metadata and release", osReleaseFile)
 	}
 	defer f.Close()
 
@@ -71,23 +52,23 @@ func addOsRelease(info *extractor.ExtractorSection) error {
 		// Name
 		match := regexName.FindStringSubmatch(text)
 		if match != nil {
-			(*info)["arch.os.name"] = strings.Trim(match[1], `"`)
+			name = strings.Trim(match[1], `"`)
 			continue
 		}
 
 		// ID for os
 		match = regexID.FindStringSubmatch(text)
 		if match != nil {
-			(*info)["arch.os.vendor"] = strings.Trim(match[1], `"`)
+			vendor = strings.Trim(match[1], `"`)
 			continue
 		}
 
 		match = regexVersion.FindStringSubmatch(text)
 		if match != nil {
-			(*info)["arch.os.version"] = strings.Trim(match[1], `"`)
+			version = strings.Trim(match[1], `"`)
 		}
 	}
-	return nil
+	return name, version, vendor, nil
 }
 
 // readOsRelease looks for different os version files to read
@@ -146,24 +127,20 @@ func readOsRelease(prettyName string, vendor string) (string, error) {
 func getOsInformation() (extractor.ExtractorSection, error) {
 	info := extractor.ExtractorSection{}
 
-	// Read in architectures
-	arch, err := getOsArch()
+	// Get the name, version, and vendor
+	name, version, vendor, err := parseOsRelease()
 	if err != nil {
 		return info, err
 	}
-	info["arch.name"] = arch
-
-	// Read in metadata (version, id, name) from os release file
-	err = addOsRelease(&info)
-	if err != nil {
-		return info, err
-	}
+	info["name"] = name
+	info["version"] = version
+	info["vendor"] = vendor
 
 	// Read in the os release metadata
-	osRelease, err := readOsRelease(info["arch.os.name"], info["arch.os.vendor"])
+	osRelease, err := readOsRelease(name, vendor)
 	if err != nil {
 		return info, err
 	}
-	info["arch.os.release"] = osRelease
+	info["release"] = osRelease
 	return info, nil
 }
