@@ -18,6 +18,14 @@ compatibilities:
     implementation: library.mpi.variant
     version: library.mpi.version
 
+- name: "org.supercontainers.os" 
+  version: "0.0.0"
+  annotations:
+    name: system.os.name
+    release: system.os.release
+    vendor: system.os.vendor
+    version: system.os.version
+
 # This is an example of a custom metadata attribute provided by the user (commandline)
 # It can override an actual attribute, or just be random / new, -o custom.gpu.available=yes
 - name: "org.supercontainers.hardware.gpu"
