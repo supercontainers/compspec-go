@@ -175,8 +175,8 @@ The library extractor currently just has one section for "mpi"
 ⭐️ Running extract...
  --Result for library
  -- Section mpi
-   mpi.variant: mpich
-   mpi.version: 4.1.1
+   variant: mpich
+   version: 4.1.1
 Extraction has run!
 ```
 
@@ -198,8 +198,8 @@ cat test-library.json
     "library": {
       "sections": {
         "mpi": {
-          "mpi.variant": "mpich",
-          "mpi.version": "4.1.1"
+          "variant": "mpich",
+          "version": "4.1.1"
         }
       }
     }
