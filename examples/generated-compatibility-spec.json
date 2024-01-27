@@ -15,6 +15,16 @@
       }
     },
     {
+      "name": "org.supercontainers.os",
+      "version": "0.0.0",
+      "annotations": {
+        "name": "Ubuntu 22.04.3 LTS",
+        "release": "22.04.3",
+        "vendor": "ubuntu",
+        "version": "22.04"
+      }
+    },
+    {
       "name": "org.supercontainers.hardware.gpu",
       "version": "0.0.0",
       "annotations": {

@@ -1,0 +1,6 @@
+# Check manifest
+# This is an example manifest to manually pair container images with their compatibility artifacts
+# note that the artifact layer type needs to be "application/org.supercontainers.compspec" to be discovered
+images:
+  - name: ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64
+    artifact: ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64-compspec
