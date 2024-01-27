@@ -31,7 +31,7 @@ cmd=". /etc/profile && /tmp/data/generate-artifact.sh no /tmp/data/specs/compspe
 docker run -v $PWD:/tmp/data -it ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64 /bin/bash -c "$cmd"
 
 # This generates ./specs/compspec-intel-mpi-rocky-9-amd64.json, let's push to a registry with oras
-oras push ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64-compspec --artifact-type application/org.supercontainers.compspec ./specs/compspec-intel-mpi-rocky-9-amd64.json
+oras push ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64-compspec-test --artifact-type application/org.supercontainers.compspec ./specs/compspec-intel-mpi-rocky-9-amd64.json:application/org.supercontainers.compspec
 ```
 
 Here is how we might see it:

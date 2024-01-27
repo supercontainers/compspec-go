@@ -136,7 +136,81 @@ For now we will manually remember the pairing, at least until the compatibility 
 
 Check is the command you would use to check a potential host against one or more existing artifacts.
 For a small experiment of using create against a set of containers and then testing how to do a check, we are going to place content
-in [examples/check-lammps](examples/check-lammps).
+in [examples/check-lammps](examples/check-lammps). As an example, we might use the manifest in that directory to run a check.
+Note that since most use cases aren't checking the images in the manifest list against the host running the command, we instead
+provide the parameters about the expected runtime host to them.
+
+```bash
+./bin/compspec check -i ./examples/check-lammps/manifest.yaml
+```
+
+<details>
+
+<summary>Example check output</summary>
+
+```console
+&{[{ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64 ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64-compspec}]}
+Found digest: sha256:b0382d21a2e734ffd3b39160443384fdd44ee7b38e99197f1c832dd73216af2d for intel-mpi-rocky-9-amd64-compspec
+{
+  "version": "0.0.0",
+  "kind": "CompatibilitySpec",
+  "metadata": {
+    "name": "lammps-prototype",
+    "jsonSchema": "https://raw.githubusercontent.com/supercontainers/compspec/main/supercontainers/compspec.json"
+  },
+  "compatibilities": [
+    {
+      "name": "org.supercontainers.mpi",
+      "version": "0.0.0",
+      "annotations": {
+        "implementation": "intel-mpi",
+        "version": "2021.8"
+      }
+    },
+    {
+      "name": "org.supercontainers.os",
+      "version": "0.0.0",
+      "annotations": {
+        "name": "Rocky Linux 9.3 (Blue Onyx)",
+        "release": "9.3",
+        "vendor": "rocky",
+        "version": "9.3"
+      }
+    },
+    {
+      "name": "org.supercontainers.hardware.gpu",
+      "version": "0.0.0",
+      "annotations": {
+        "available": "no"
+      }
+    },
+    {
+      "name": "io.archspec.cpu",
+      "version": "0.0.0",
+      "annotations": {
+        "model": "13th Gen Intel(R) Core(TM) i5-1335U",
+        "target": "amd64",
+        "vendor": "GenuineIntel"
+      }
+    }
+  ]
+}
+{0.0.0 CompatibilitySpec {lammps-prototype https://raw.githubusercontent.com/supercontainers/compspec/main/supercontainers/compspec.json} [{org.supercontainers.mpi 0.0.0 map[implementation:intel-mpi version:2021.8]} {org.supercontainers.os 0.0.0 map[name:Rocky Linux 9.3 (Blue Onyx) release:9.3 vendor:rocky version:9.3]} {org.supercontainers.hardware.gpu 0.0.0 map[available:no]} {io.archspec.cpu 0.0.0 map[model:13th Gen Intel(R) Core(TM) i5-1335U target:amd64 vendor:GenuineIntel]}]}
+```
+
+</details>
+
+Note that if you provide (append) zero host fields with `-a` for each, you will basically get back the listing of ordered images.
+The command logic and (very simple) algortithm works as follows.
+
+1. Read in all entries from the list
+2. Retrieve their artifacts, look for the "application/org.supercontainers.compspec" layer media type to identify it.
+3. Retrieve it (within the application) and parse into the compatibility metadata
+4. Create a flat graph with a node for each image, and annotations as the attributes
+5. Search the graph based on the provided preferences
+
+Note that the current prototype knows how to read in the manifest and print out the json. I am going to play around with graphs (and making a library) soon that we can use here.
+
 
 ## Extract
 
