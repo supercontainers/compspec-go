@@ -10,11 +10,11 @@ type CompatibilitySpec struct {
 	Compatibilities map[string]CompatibilitySpec `json:"compatibilities"`
 }
 type CompatibiitySpec struct {
-	Version     string      `json:"version"`
-	Annotations Annotations `json:"annotations"`
+	Version    string     `json:"version"`
+	Attributes Attributes `json:"attributes"`
 }
 
-type Annotations map[string]string
+type Attributes map[string]string
 
 // A compatibility request is a mapping between a user preferences (some request to create a
 // compatibility artifact) to a set of metadata attributes known by extractors.
@@ -27,16 +27,16 @@ type CompatibilityRequest struct {
 	Compatibilities []CompatibilityMapping `json:"compatibilities,omitempty"`
 }
 type Metadata struct {
-	Name       string `json:"name,omitempty"`
-	JSONSchema string `json:"jsonSchema,omitempty"`
+	Name    string            `json:"name,omitempty"`
+	Schemas map[string]string `json:"schemas,omitempty"`
 }
 
 // A compatibility mapping has one or more annotations that convert
 // between extractor and compspec.json (the JsonSchema provided above)
 type CompatibilityMapping struct {
-	Name        string            `json:"name,omitempty"`
-	Version     string            `json:"version,omitempty"`
-	Annotations map[string]string `json:"annotations,omitempty"`
+	Name       string            `json:"name,omitempty"`
+	Version    string            `json:"version,omitempty"`
+	Attributes map[string]string `json:"attributes,omitempty"`
 }
 
 // ToJson dumps our request to json for the artifact
@@ -53,7 +53,7 @@ func (r *CompatibilityRequest) GetExtractors() []string {
 
 	set := map[string]bool{}
 	for _, compat := range r.Compatibilities {
-		for _, request := range compat.Annotations {
+		for _, request := range compat.Attributes {
 
 			// The extractor name is the first field
 			parts := strings.Split(request, ".")
