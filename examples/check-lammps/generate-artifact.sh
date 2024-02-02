@@ -9,7 +9,7 @@ wget --quiet https://github.com/supercontainers/compspec-go/releases/download/1-
 chmod +x compspec
 
 # Download the spec for our compatibility artifact
-wget --quiet https://gist.githubusercontent.com/vsoch/fcd0f7d633860674cb085a8540ce4bb2/raw/880f3764b9394ccaa21fd768b235c7a89609aa65/lammps-experiment.yaml
+wget --quiet https://gist.githubusercontent.com/vsoch/fcd0f7d633860674cb085a8540ce4bb2/raw/4f8e730f1d74c070e63de79bf8b6f86a528ef1c9/lammps-experiment.yaml
 
 # Generate!
 ./compspec create --in ./lammps-experiment.yaml -a custom.gpu.available=$hasGpu -o ${path}

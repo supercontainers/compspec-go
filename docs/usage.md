@@ -91,31 +91,32 @@ The idea here is that you can add custom metadata fields during your build, whic
   "kind": "CompatibilitySpec",
   "metadata": {
     "name": "lammps-prototype",
-    "jsonSchema": "https://raw.githubusercontent.com/supercontainers/compspec/main/supercontainers/compspec.json"
+    "schemas": {
+      "archspec.io": "https://raw.githubusercontent.com/supercontainers/compspec/main/archspec/compspec.json",
+      "org.supercontainers": "https://raw.githubusercontent.com/supercontainers/compspec/main/supercontainers/compspec.json"
+    }
   },
   "compatibilities": [
     {
-      "name": "org.supercontainers.mpi",
+      "name": "org.supercontainers",
       "version": "0.0.0",
-      "annotations": {
-        "implementation": "mpich",
-        "version": "4.1.1"
+      "attributes": {
+        "hardware.gpu.available": "yes",
+        "mpi.implementation": "mpich",
+        "mpi.version": "4.1.1",
+        "os.name": "Ubuntu 22.04.3 LTS",
+        "os.release": "22.04.3",
+        "os.vendor": "ubuntu",
+        "os.version": "22.04"
       }
     },
     {
-      "name": "org.supercontainers.hardware.gpu",
+      "name": "archspec.io",
       "version": "0.0.0",
-      "annotations": {
-        "available": "yes"
-      }
-    },
-    {
-      "name": "io.archspec.cpu",
-      "version": "0.0.0",
-      "annotations": {
-        "model": "13th Gen Intel(R) Core(TM) i5-1335U",
-        "target": "amd64",
-        "vendor": "GenuineIntel"
+      "attributes": {
+        "cpu.model": "13th Gen Intel(R) Core(TM) i5-1335U",
+        "cpu.target": "amd64",
+        "cpu.vendor": "GenuineIntel"
       }
     }
   ]
@@ -136,7 +137,7 @@ For now we will manually remember the pairing, at least until the compatibility 
 
 Check is the command you would use to check a potential host against one or more existing artifacts.
 For a small experiment of using create against a set of containers and then testing how to do a check, we are going to place content
-in [examples/check-lammps](examples/check-lammps). As an example, we might use the manifest in that directory to run a check.
+in [examples/check-lammps](examples/check-lammps). Note that we generated the actual compatibility spec and pushed with oras before running the example here! Following that, we might use the manifest in that directory to run a check.
 Note that since most use cases aren't checking the images in the manifest list against the host running the command, we instead
 provide the parameters about the expected runtime host to them.
 

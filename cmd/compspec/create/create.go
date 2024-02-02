@@ -52,6 +52,10 @@ func Run(specname string, fields []string, saveto string) error {
 
 	// The compspec returned is the populated Compatibility request!
 	compspec, err := PopulateExtractors(&result, request)
+	if err != nil {
+		return err
+	}
+
 	output, err := compspec.ToJson()
 	if err != nil {
 		return err
@@ -71,14 +75,29 @@ func Run(specname string, fields []string, saveto string) error {
 // After this we can save the populated thing into an artifact (json DUMP)
 func PopulateExtractors(result *p.Result, request *types.CompatibilityRequest) (*types.CompatibilityRequest, error) {
 
+	// Every metadata attribute must be known under a schema
+	schemas := request.Metadata.Schemas
+	if len(schemas) == 0 {
+		return nil, fmt.Errorf("the request must have one or more schemas")
+	}
 	for i, compat := range request.Compatibilities {
-		for key, extractorKey := range compat.Annotations {
+
+		// The compatibility section name is a schema, and must be defined
+		url, ok := schemas[compat.Name]
+		if !ok {
+			return nil, fmt.Errorf("%s is missing a schema", compat.Name)
+		}
+		if url == "" {
+			return nil, fmt.Errorf("%s has an empty schema", compat.Name)
+		}
+
+		for key, extractorKey := range compat.Attributes {
 
 			// Get the extractor, section, and subfield from the extractor lookup key
 			f, err := p.ParseField(extractorKey)
 			if err != nil {
 				fmt.Printf("warning: cannot parse %s: %s, setting to empty\n", key, extractorKey)
-				compat.Annotations[key] = ""
+				compat.Attributes[key] = ""
 				continue
 			}
 
@@ -86,7 +105,7 @@ func PopulateExtractors(result *p.Result, request *types.CompatibilityRequest) (
 			extractor, ok := result.Results[f.Extractor]
 			if !ok {
 				fmt.Printf("warning: extractor %s is unknown, setting to empty\n", f.Extractor)
-				compat.Annotations[key] = ""
+				compat.Attributes[key] = ""
 				continue
 			}
 
@@ -94,7 +113,7 @@ func PopulateExtractors(result *p.Result, request *types.CompatibilityRequest) (
 			section, ok := extractor.Sections[f.Section]
 			if !ok {
 				fmt.Printf("warning: section %s.%s is unknown, setting to empty\n", f.Extractor, f.Section)
-				compat.Annotations[key] = ""
+				compat.Attributes[key] = ""
 				continue
 			}
 
@@ -102,12 +121,12 @@ func PopulateExtractors(result *p.Result, request *types.CompatibilityRequest) (
 			value, ok := section[f.Field]
 			if !ok {
 				fmt.Printf("warning: field %s.%s.%s is unknown, setting to empty\n", f.Extractor, f.Section, f.Field)
-				compat.Annotations[key] = ""
+				compat.Attributes[key] = ""
 				continue
 			}
 
 			// If we get here - we found it! Hooray!
-			compat.Annotations[key] = value
+			compat.Attributes[key] = value
 		}
 
 		// Update the compatibiity
