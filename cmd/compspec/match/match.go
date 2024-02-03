@@ -1,4 +1,4 @@
-package check
+package match
 
 import (
 	"encoding/json"
@@ -32,7 +32,13 @@ func loadManifest(filename string) (*types.ManifestList, error) {
 
 // Run will check a manifest list of artifacts against a host machine
 // For now, the host machine parameters will be provided as flags
-func Run(manifestFile string, hostFields []string, mediaType string) error {
+func Run(
+	manifestFile string,
+	hostFields []string,
+	mediaType string,
+	printMapping bool,
+	printGraph bool,
+) error {
 
 	// Default media type if one not provided
 	if mediaType == "" {
@@ -94,17 +100,35 @@ func Run(manifestFile string, hostFields []string, mediaType string) error {
 			}
 		}
 	}
-	err = g.PrintMapping()
-	if err != nil {
-		return err
+
+	// We only want to print the mapping and exit
+	if printMapping {
+		err = g.PrintMapping()
+		if err != nil {
+			return err
+		}
+		return nil
 	}
 
 	// Print the graph
-	printme, _ := json.MarshalIndent(g.Graph, "", "\t")
-	fmt.Println(string(printme))
+	if printGraph {
+		toprint, _ := json.MarshalIndent(g.Graph, "", "\t")
+		fmt.Println(string(toprint))
+		return nil
+	}
 
-	// TODO we will take this set of requests, load them into a graph,
-	// and then query the graph based on user preferences (the host fields)
-	// that are provided that describe the host we want to match compatibility with
+	// Perform the match to the desired host
+	matches, err := g.Match(hostFields)
+	if err != nil {
+		return err
+	}
+	if len(matches) == 0 {
+		fmt.Println("There was no match. Try changig your constaints.")
+	} else {
+		fmt.Println(" --- Found matches ---")
+		for _, match := range matches {
+			fmt.Println(match)
+		}
+	}
 	return nil
 }

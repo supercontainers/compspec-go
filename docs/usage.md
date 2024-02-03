@@ -133,87 +133,219 @@ a build will generate it for that context. We would want to save this to file:
 And that's it! We would next (likely during CI) push this compatibility artifact to a URI that is likely (TBA) linked to the image.
 For now we will manually remember the pairing, at least until the compatibility working group figures out the final design!
 
-## Check
+## Match
 
-Check is the command you would use to check a potential host against one or more existing artifacts.
-For a small experiment of using create against a set of containers and then testing how to do a check, we are going to place content
-in [examples/check-lammps](examples/check-lammps). Note that we generated the actual compatibility spec and pushed with oras before running the example here! Following that, we might use the manifest in that directory to run a check.
-Note that since most use cases aren't checking the images in the manifest list against the host running the command, we instead
+Match is the command you would use to check a potential host against one or more existing artifacts and find matches.
+For a small experiment of using create against a set of containers and then testing how to do a match, we are going to place content
+in [examples/check-lammps](examples/check-lammps). Note that we generated the actual compatibility spec and pushed with oras before running the example here! Following that, we might use the manifest in that directory to run a match. Note that since most use cases aren't checking the images in the manifest list against the host running the command, we instead
 provide the parameters about the expected runtime host to them.
 
-```bash
-./bin/compspec check -i ./examples/check-lammps/manifest.yaml
-```
+### Match without Metadata Attributes
 
-TODO stopped here, need to do the whole check thing.
+When you run match without options, all images are by default matches, hooray!
+
+```bash
+./bin/compspec match -i ./examples/check-lammps/manifest.yaml
+```
 
 <details>
 
-<summary>Example check output</summary>
+<summary>Match without metadata attributes matches all images</summary>
 
 ```console
-&{[{ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64 ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64-compspec}]}
-Found digest: sha256:b0382d21a2e734ffd3b39160443384fdd44ee7b38e99197f1c832dd73216af2d for intel-mpi-rocky-9-amd64-compspec
-{
-  "version": "0.0.0",
-  "kind": "CompatibilitySpec",
-  "metadata": {
-    "name": "lammps-prototype",
-    "jsonSchema": "https://raw.githubusercontent.com/supercontainers/compspec/main/supercontainers/compspec.json"
-  },
-  "compatibilities": [
-    {
-      "name": "org.supercontainers.mpi",
-      "version": "0.0.0",
-      "annotations": {
-        "implementation": "intel-mpi",
-        "version": "2021.8"
-      }
-    },
-    {
-      "name": "org.supercontainers.os",
-      "version": "0.0.0",
-      "annotations": {
-        "name": "Rocky Linux 9.3 (Blue Onyx)",
-        "release": "9.3",
-        "vendor": "rocky",
-        "version": "9.3"
-      }
-    },
-    {
-      "name": "org.supercontainers.hardware.gpu",
-      "version": "0.0.0",
-      "annotations": {
-        "available": "no"
-      }
-    },
-    {
-      "name": "io.archspec.cpu",
-      "version": "0.0.0",
-      "annotations": {
-        "model": "13th Gen Intel(R) Core(TM) i5-1335U",
-        "target": "amd64",
-        "vendor": "GenuineIntel"
-      }
-    }
-  ]
-}
-{0.0.0 CompatibilitySpec {lammps-prototype https://raw.githubusercontent.com/supercontainers/compspec/main/supercontainers/compspec.json} [{org.supercontainers.mpi 0.0.0 map[implementation:intel-mpi version:2021.8]} {org.supercontainers.os 0.0.0 map[name:Rocky Linux 9.3 (Blue Onyx) release:9.3 vendor:rocky version:9.3]} {org.supercontainers.hardware.gpu 0.0.0 map[available:no]} {io.archspec.cpu 0.0.0 map[model:13th Gen Intel(R) Core(TM) i5-1335U target:amd64 vendor:GenuineIntel]}]}
+No field criteria provided, all images are matches.
+ --- Found matches ---
+ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64
+ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-8-amd64
+ghcr.io/rse-ops/lammps-matrix:openmpi-ubuntu-gpu-20.04
+ghcr.io/rse-ops/lammps-matrix:openmpi-ubuntu-gpu-22.04
 ```
 
 </details>
 
-Note that if you provide (append) zero host fields with `-a` for each, you will basically get back the listing of ordered images.
-The command logic and (very simple) algortithm works as follows.
+### Match with Metadata Attributes
+
+Of course the purpose of the match is to actually provide metadata to match to! Let's ask for gpu. Since we are now querying across an entire graph (with more than one schema) we need to provide the full URI of the annotation. Let's ask for GPUs first!
+
+```bash
+./bin/compspec match -i ./examples/check-lammps/manifest.yaml --match org.supercontainers.hardware.gpu.available=yes
+```
+```console
+ --- Found matches ---
+ghcr.io/rse-ops/lammps-matrix:openmpi-ubuntu-gpu-20.04
+ghcr.io/rse-ops/lammps-matrix:openmpi-ubuntu-gpu-22.04
+```
+
+Now - no GPU!
+
+
+```console
+ --- Found matches ---
+ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64
+ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-8-amd64
+```
+
+That is very simple, but should serve our purposes for now.
+
+
+### Check to print Metadata attributes
+
+If you want to carefully inspect the metadata attributes discovered with your artifact set, add `-p` or `--print`
+
+```bash
+./bin/compspec match -i ./examples/check-lammps/manifest.yaml --print
+```
+
+Below shows just the last image (the output is large)
+
+<details>
+
+<summary>Check to print metadata attributes associated with each image artifact</summary>
+
+```console
+-- Mapping for Images
+  image: ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64
+  nodes:
+  -  compspec-root
+  -  io.archspec.cpu
+  -  io.archspec.cpu.model
+  -  io.archspec.cpu.model.13th Gen Intel(R) Core(TM) i5-1335U
+  -  io.archspec.cpu.target
+  -  io.archspec.cpu.target.amd64
+  -  io.archspec.cpu.vendor
+  -  io.archspec.cpu.vendor.GenuineIntel
+  -  org.supercontainers
+  -  org.supercontainers.hardware
+  -  org.supercontainers.hardware.gpu
+  -  org.supercontainers.hardware.gpu.available
+  -  org.supercontainers.hardware.gpu.available.no
+  -  org.supercontainers.mpi
+  -  org.supercontainers.mpi.implementation
+  -  org.supercontainers.mpi.implementation.intel-mpi
+  -  org.supercontainers.mpi.version
+  -  org.supercontainers.mpi.version.2021.8
+  -  org.supercontainers.os
+  -  org.supercontainers.os.name
+  -  org.supercontainers.os.name.Rocky Linux 9.3 (Blue Onyx)
+  -  org.supercontainers.os.release
+  -  org.supercontainers.os.release.9.3
+  -  org.supercontainers.os.vendor
+  -  org.supercontainers.os.vendor.rocky
+  -  org.supercontainers.os.version
+  -  org.supercontainers.os.version.9.3
+  image: ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-8-amd64
+  nodes:
+  -  compspec-root
+  -  io.archspec.cpu
+  -  io.archspec.cpu.model
+  -  io.archspec.cpu.model.13th Gen Intel(R) Core(TM) i5-1335U
+  -  io.archspec.cpu.target
+  -  io.archspec.cpu.target.amd64
+  -  io.archspec.cpu.vendor
+  -  io.archspec.cpu.vendor.GenuineIntel
+  -  org.supercontainers
+  -  org.supercontainers.hardware
+  -  org.supercontainers.hardware.gpu
+  -  org.supercontainers.hardware.gpu.available
+  -  org.supercontainers.hardware.gpu.available.no
+  -  org.supercontainers.mpi
+  -  org.supercontainers.mpi.implementation
+  -  org.supercontainers.mpi.implementation.intel-mpi
+  -  org.supercontainers.mpi.version
+  -  org.supercontainers.mpi.version.2021.8
+  -  org.supercontainers.os
+  -  org.supercontainers.os.name
+  -  org.supercontainers.os.name.Rocky Linux 8.9 (Green Obsidian)
+  -  org.supercontainers.os.release
+  -  org.supercontainers.os.release.8.9
+  -  org.supercontainers.os.vendor
+  -  org.supercontainers.os.vendor.rocky
+  -  org.supercontainers.os.version
+  -  org.supercontainers.os.version.8.9
+  image: ghcr.io/rse-ops/lammps-matrix:openmpi-ubuntu-gpu-20.04
+  nodes:
+  -  compspec-root
+  -  io.archspec.cpu
+  -  io.archspec.cpu.model
+  -  io.archspec.cpu.model.13th Gen Intel(R) Core(TM) i5-1335U
+  -  io.archspec.cpu.target
+  -  io.archspec.cpu.target.amd64
+  -  io.archspec.cpu.vendor
+  -  io.archspec.cpu.vendor.GenuineIntel
+  -  org.supercontainers
+  -  org.supercontainers.hardware
+  -  org.supercontainers.hardware.gpu
+  -  org.supercontainers.hardware.gpu.available
+  -  org.supercontainers.hardware.gpu.available.yes
+  -  org.supercontainers.mpi
+  -  org.supercontainers.mpi.implementation
+  -  org.supercontainers.mpi.implementation.OpenMPI
+  -  org.supercontainers.mpi.version
+  -  org.supercontainers.mpi.version.4.0.3
+  -  org.supercontainers.os
+  -  org.supercontainers.os.name
+  -  org.supercontainers.os.name.Ubuntu 20.04.6 LTS
+  -  org.supercontainers.os.release
+  -  org.supercontainers.os.release.20.04.6
+  -  org.supercontainers.os.vendor
+  -  org.supercontainers.os.vendor.ubuntu
+  -  org.supercontainers.os.version
+  -  org.supercontainers.os.version.20.04
+  image: ghcr.io/rse-ops/lammps-matrix:openmpi-ubuntu-gpu-22.04
+  nodes:
+  -  compspec-root
+  -  io.archspec.cpu
+  -  io.archspec.cpu.model
+  -  io.archspec.cpu.model.13th Gen Intel(R) Core(TM) i5-1335U
+  -  io.archspec.cpu.target
+  -  io.archspec.cpu.target.amd64
+  -  io.archspec.cpu.vendor
+  -  io.archspec.cpu.vendor.GenuineIntel
+  -  org.supercontainers
+  -  org.supercontainers.hardware
+  -  org.supercontainers.hardware.gpu
+  -  org.supercontainers.hardware.gpu.available
+  -  org.supercontainers.hardware.gpu.available.yes
+  -  org.supercontainers.mpi
+  -  org.supercontainers.mpi.implementation
+  -  org.supercontainers.mpi.implementation.OpenMPI
+  -  org.supercontainers.mpi.version
+  -  org.supercontainers.mpi.version.4.1.2
+  -  org.supercontainers.os
+  -  org.supercontainers.os.name
+  -  org.supercontainers.os.name.Ubuntu 22.04.3 LTS
+  -  org.supercontainers.os.release
+  -  org.supercontainers.os.release.22.04.3
+  -  org.supercontainers.os.vendor
+  -  org.supercontainers.os.vendor.ubuntu
+  -  org.supercontainers.os.version
+  -  org.supercontainers.os.version.22.04
+```
+
+</details>
+
+### Match to show the graph
+
+If you want to look at the schema graph (without images mapped to it) you can do:
+
+```bash
+./bin/compspec match -i ./examples/check-lammps/manifest.yaml --print-graph
+```
+
+This is in Json Graph Format (JGF). We likely will be developing better visualization tools to show this.
+
+### Check Algorithm
+
+The application and command logic and (very simple) algortithm works as follows.
 
 1. Read in all entries from the list
 2. Retrieve their artifacts, look for the "application/org.supercontainers.compspec" layer media type to identify it.
-3. Retrieve it (within the application) and parse into the compatibility metadata
-4. Create a flat graph with a node for each image, and annotations as the attributes
-5. Search the graph based on the provided preferences
+3. Generate a graph from the schemas we find (it is empty, no images mapped to it yet)
+4. Map each image into the graph, linking the image identifer to each node in the graph
+5. Take a user match request and look for the matching nodes (metadata attributes)
+6. Take the intersection of images at all nodes, those are the matches!
 
-Note that the current prototype knows how to read in the manifest and print out the json. I am going to play around with graphs (and making a library) soon that we can use here.
-
+Note that the arch represents YOUR host, and if this is run during build time, would be for the build environent. We probably need to think this over more. I need to test this out and ensure that the artifacts reflect the host where they were built, or the one we expect.
 
 ## Extract
 

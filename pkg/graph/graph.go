@@ -7,6 +7,8 @@ import (
 	"github.com/converged-computing/jsongraph-go/jsongraph/v2/graph"
 	jgf "github.com/converged-computing/jsongraph-go/jsongraph/v2/graph"
 	"github.com/supercontainers/compspec-go/pkg/utils"
+
+	"github.com/scylladb/go-set/strset"
 )
 
 const (
@@ -37,11 +39,13 @@ type CompatibilityGraph struct {
 	// This helps us ensure we add each only once
 	Schemas map[string]bool
 
-	// I did this strategy because the metadata elements of the JGF are a list
-	// This isn't ideal, but this will work for now. This is a lookup of node label
-	// to container images (strings). This might be better to use integers for
-	// larger graphs
+	// This isn't ideal, but this will work for now. This is a lookup of
+	// container images (strings) to node labels.
+	// TODO update to use set?
 	Images ImageMapping `json:"imageMapping"`
+
+	// Node labels to container images
+	NodeLabels ImageMapping `json:"nodeLabels"`
 }
 
 // HasNode determines if the graph has a node, named by label
@@ -118,6 +122,15 @@ func (c *CompatibilityGraph) AddAttribute(
 
 	// Update images for the uri
 	c.Images[uri] = images
+
+	// Add final URI to node label lookup.
+	// This allows us to quickly get images for a label at the end
+	labels, ok := c.NodeLabels[nsValue]
+	if !ok {
+		labels = map[string]bool{}
+	}
+	labels[uri] = true
+	c.NodeLabels[nsValue] = labels
 	return nil
 }
 
@@ -137,6 +150,76 @@ func (c *CompatibilityGraph) PrintMapping() error {
 		}
 	}
 	return nil
+}
+
+// Match finds matching nodes in the graph
+// This is actually very simple (and dumb) and given the data structure,
+// we don't need to traverse anything. We can:
+// 1. Get an exact lookup for a feature of interest to a node.
+// 2. If this node doesn't exist, we cannot match - that feature is missing
+// 3. If it exists, keep the set of images
+// 4. Continue to get sets of images for all desired features
+// 5. The intersection across those are the matches!
+func (c *CompatibilityGraph) Match(fields []string) ([]string, error) {
+
+	// No fields, all are matches!
+	if len(fields) == 0 {
+		fmt.Println("No field criteria provided, all images are matches.")
+
+		matches := []string{}
+		for uri, _ := range c.Images {
+			matches = append(matches, uri)
+		}
+		return matches, nil
+	}
+
+	// Faux set
+	matches := strset.New()
+	started := false
+
+	for _, field := range fields {
+		if !strings.Contains(field, "=") {
+			fmt.Printf("Field request %s is missing '=', skipping", field)
+		}
+		parts := strings.SplitN(field, "=", 2)
+		key := parts[0]
+		value := parts[1]
+		nodeId := fmt.Sprintf("%s.%s", key, value)
+
+		// Do we have the node images
+		uris, ok := c.NodeLabels[nodeId]
+		fmt.Println(uris)
+		if !ok {
+			return []string{}, fmt.Errorf("Field %s is not known and cannot be matched.", field)
+		}
+
+		// Cut out early if we don't have matches
+		if len(uris) == 0 {
+			return []string{}, fmt.Errorf("Field %s does not have any associated images, match not possible.", field)
+		}
+
+		// If we aren't started, just take the first set as the solution
+		if !started {
+			for uri := range uris {
+				matches.Add(uri)
+			}
+			started = true
+		} else {
+
+			// Otherwise, we need to take the intersection
+			contenders := strset.New()
+			for uri := range uris {
+				contenders.Add(uri)
+			}
+			matches = strset.Intersection(matches, contenders)
+
+			// Intersection is empty, no solution
+			if matches.IsEmpty() {
+				return []string{}, fmt.Errorf("Adding field %s empties match set, no possible", field)
+			}
+		}
+	}
+	return matches.List(), nil
 }
 
 // AddSchema by url to the graph
@@ -207,6 +290,7 @@ func NewGraph() (CompatibilityGraph, error) {
 
 	schemas := map[string]bool{}
 	images := map[string]map[string]bool{}
+	labels := map[string]map[string]bool{}
 
 	// prepare a graph to load targets into
 	g := jgf.NewGraph()
@@ -216,6 +300,6 @@ func NewGraph() (CompatibilityGraph, error) {
 	g.Graph.Nodes[rootLabel] = *root
 
 	// Return the compatibility graph wrapping it
-	cg := CompatibilityGraph{g, schemas, images}
+	cg := CompatibilityGraph{g, schemas, images, labels}
 	return cg, nil
 }

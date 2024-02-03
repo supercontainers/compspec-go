@@ -79,4 +79,11 @@ oras blob fetch --output - ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64
 }
 ```
 
-This is great! Next we will capture the URIs of these together in a manifest and put into our compspec tool.
+Let's run a quick script that will generate this for a few images so we can better prototype our matching (check) command:
+
+```bash
+./extract.sh
+```
+
+Note that arch reflects our host environment, which is an issue we need to figure out. This
+also needs to be able to build for the right host arch. Next we will capture the URIs of these together in a manifest and put into our compspec tool.
