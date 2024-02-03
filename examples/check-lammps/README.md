@@ -27,17 +27,19 @@ first, generating the artifact and [pushing to oras](https://oras.land/docs/how_
 mkdir -p ./specs
 
 # arguments are the hasGpu command and the path for the artifact (relative to PWD)
+# TODO it looks like the arch is coming from my host, this would need to be run at build time alongside
+# the machine it was built on. We'd also want to make sure it's documented this is the case
 cmd=". /etc/profile && /tmp/data/generate-artifact.sh no /tmp/data/specs/compspec-intel-mpi-rocky-9-amd64.json"
 docker run -v $PWD:/tmp/data -it ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64 /bin/bash -c "$cmd"
 
 # This generates ./specs/compspec-intel-mpi-rocky-9-amd64.json, let's push to a registry with oras
-oras push ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64-compspec-test --artifact-type application/org.supercontainers.compspec ./specs/compspec-intel-mpi-rocky-9-amd64.json:application/org.supercontainers.compspec
+oras push ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64-compspec --artifact-type application/org.supercontainers.compspec ./specs/compspec-intel-mpi-rocky-9-amd64.json:application/org.supercontainers.compspec
 ```
 
 Here is how we might see it:
 
 ```bash
-oras blob fetch --output - ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64-compspec@sha256:b68136afad3e4340f0dd4e09c5fea7faf12306cb4b0c1de616703b00d6ffef78
+oras blob fetch --output - ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64-compspec@sha256:376ea8d492aa8e8db312cecc34bbc729d18fc2b30e891deb2ffdffa38c7db3a5
 ```
 ```console
 {
@@ -45,45 +47,36 @@ oras blob fetch --output - ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64
   "kind": "CompatibilitySpec",
   "metadata": {
     "name": "lammps-prototype",
-    "jsonSchema": "https://raw.githubusercontent.com/supercontainers/compspec/main/supercontainers/compspec.json"
+    "schemas": {
+      "io.archspec": "https://raw.githubusercontent.com/supercontainers/compspec/main/archspec/compspec.json",
+      "org.supercontainers": "https://raw.githubusercontent.com/supercontainers/compspec/main/supercontainers/compspec.json"
+    }
   },
   "compatibilities": [
     {
-      "name": "org.supercontainers.mpi",
+      "name": "org.supercontainers",
       "version": "0.0.0",
-      "annotations": {
-        "implementation": "intel-mpi",
-        "version": "2021.8"
+      "attributes": {
+        "hardware.gpu.available": "no",
+        "mpi.implementation": "intel-mpi",
+        "mpi.version": "2021.8",
+        "os.name": "Rocky Linux 9.3 (Blue Onyx)",
+        "os.release": "9.3",
+        "os.vendor": "rocky",
+        "os.version": "9.3"
       }
     },
     {
-      "name": "org.supercontainers.os",
+      "name": "io.archspec",
       "version": "0.0.0",
-      "annotations": {
-        "name": "Rocky Linux 9.3 (Blue Onyx)",
-        "release": "9.3",
-        "vendor": "rocky",
-        "version": "9.3"
-      }
-    },
-    {
-      "name": "org.supercontainers.hardware.gpu",
-      "version": "0.0.0",
-      "annotations": {
-        "available": "no"
-      }
-    },
-    {
-      "name": "io.archspec.cpu",
-      "version": "0.0.0",
-      "annotations": {
-        "model": "13th Gen Intel(R) Core(TM) i5-1335U",
-        "target": "amd64",
-        "vendor": "GenuineIntel"
+      "attributes": {
+        "cpu.model": "13th Gen Intel(R) Core(TM) i5-1335U",
+        "cpu.target": "amd64",
+        "cpu.vendor": "GenuineIntel"
       }
     }
   ]
 }
 ```
 
-This is great! Next we will capture the URIs of these together in a manifest and put into our compspec tool. TBA!
+This is great! Next we will capture the URIs of these together in a manifest and put into our compspec tool.

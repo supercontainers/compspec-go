@@ -92,7 +92,7 @@ The idea here is that you can add custom metadata fields during your build, whic
   "metadata": {
     "name": "lammps-prototype",
     "schemas": {
-      "archspec.io": "https://raw.githubusercontent.com/supercontainers/compspec/main/archspec/compspec.json",
+      "io.archspec": "https://raw.githubusercontent.com/supercontainers/compspec/main/archspec/compspec.json",
       "org.supercontainers": "https://raw.githubusercontent.com/supercontainers/compspec/main/supercontainers/compspec.json"
     }
   },
@@ -111,7 +111,7 @@ The idea here is that you can add custom metadata fields during your build, whic
       }
     },
     {
-      "name": "archspec.io",
+      "name": "io.archspec",
       "version": "0.0.0",
       "attributes": {
         "cpu.model": "13th Gen Intel(R) Core(TM) i5-1335U",
@@ -144,6 +144,8 @@ provide the parameters about the expected runtime host to them.
 ```bash
 ./bin/compspec check -i ./examples/check-lammps/manifest.yaml
 ```
+
+TODO stopped here, need to do the whole check thing.
 
 <details>
 

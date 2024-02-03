@@ -5,7 +5,7 @@ hasGpu="${1:-no}"
 path="${2:-./compatibility-spec.json}"
 
 # Note that this is hard coded for amd64, for arm you would wantt o add -arm or ppc64le -ppc
-wget --quiet https://github.com/supercontainers/compspec-go/releases/download/1-26-2024-2/compspec
+wget --quiet https://github.com/supercontainers/compspec-go/releases/download/2-2-2024-1/compspec
 chmod +x compspec
 
 # Download the spec for our compatibility artifact
