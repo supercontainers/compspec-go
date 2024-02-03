@@ -13,13 +13,13 @@
       "name": "org.supercontainers",
       "version": "0.0.0",
       "attributes": {
-        "hardware.gpu.available": "yes",
-        "mpi.implementation": "mpich",
-        "mpi.version": "4.1.1",
-        "os.name": "Ubuntu 22.04.3 LTS",
-        "os.release": "22.04.3",
-        "os.vendor": "ubuntu",
-        "os.version": "22.04"
+        "hardware.gpu.available": "no",
+        "mpi.implementation": "intel-mpi",
+        "mpi.version": "2021.8",
+        "os.name": "Rocky Linux 8.9 (Green Obsidian)",
+        "os.release": "8.9",
+        "os.vendor": "rocky",
+        "os.version": "8.9"
       }
     },
     {

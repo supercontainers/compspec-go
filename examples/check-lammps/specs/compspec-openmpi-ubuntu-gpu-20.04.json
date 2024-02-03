@@ -14,12 +14,12 @@
       "version": "0.0.0",
       "attributes": {
         "hardware.gpu.available": "yes",
-        "mpi.implementation": "mpich",
-        "mpi.version": "4.1.1",
-        "os.name": "Ubuntu 22.04.3 LTS",
-        "os.release": "22.04.3",
+        "mpi.implementation": "OpenMPI",
+        "mpi.version": "4.0.3",
+        "os.name": "Ubuntu 20.04.6 LTS",
+        "os.release": "20.04.6",
         "os.vendor": "ubuntu",
-        "os.version": "22.04"
+        "os.version": "20.04"
       }
     },
     {

@@ -10,7 +10,7 @@ metadata:
   # "Validate the namespaced attributes with these schemas"
   schemas:
     org.supercontainers: https://raw.githubusercontent.com/supercontainers/compspec/main/supercontainers/compspec.json
-    archspec.io: https://raw.githubusercontent.com/supercontainers/compspec/main/archspec/compspec.json
+    io.archspec: https://raw.githubusercontent.com/supercontainers/compspec/main/archspec/compspec.json
 
 # These are not values, but mappings, from an extractor into the compspec we want
 compatibilities:
@@ -28,7 +28,7 @@ compatibilities:
 # Note that for now we are using the processor in index 0 to represent all
 # I'm not sure about cases where this set isn't homogeneous!
 # Since target is part of the container build, we will provide it
-- name: "archspec.io"
+- name: "io.archspec"
   version: "0.0.0"
   attributes:
     cpu.model: system.processor.0.model
