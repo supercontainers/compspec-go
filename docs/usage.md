@@ -188,7 +188,7 @@ ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-8-amd64
 That is very simple, but should serve our purposes for now.
 
 
-### Check to print Metadata attributes
+### Match to print Metadata attributes
 
 If you want to carefully inspect the metadata attributes discovered with your artifact set, add `-p` or `--print`
 
@@ -200,7 +200,7 @@ Below shows just the last image (the output is large)
 
 <details>
 
-<summary>Check to print metadata attributes associated with each image artifact</summary>
+<summary>Match to print metadata attributes associated with each image artifact</summary>
 
 ```console
 -- Mapping for Images
@@ -334,7 +334,7 @@ If you want to look at the schema graph (without images mapped to it) you can do
 
 This is in Json Graph Format (JGF). We likely will be developing better visualization tools to show this.
 
-### Check Algorithm
+### Match Algorithm
 
 The application and command logic and (very simple) algortithm works as follows.
 
@@ -352,7 +352,7 @@ Note that the arch represents YOUR host, and if this is run during build time, w
 Extraction has two use cases, and likely you won't be running this manually, but within the context of another command:
 
 1. Extracting metadata about the container image at build time to generate an artifact (done via "create")
-2. Extracting metadata about the host at image selection time, and comparing against a set of contender container images to select the best one (done via "check").
+2. Extracting metadata about the host at image selection time, and comparing against a set of contender container images to select the best one (done via "match").
 
 However, for the advanced or interested user, you can run extract as a standalone utility to inspect or otherwise save metadata from extractors.
 For example, if you want to extract metadata to your local machine, you can use extract! Either just run all extractors and dump to the terminal:
