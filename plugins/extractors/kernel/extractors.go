@@ -16,6 +16,7 @@ const (
 	kernelBootFile = "/proc/cmdline"
 
 	// Full boot configuration (key value pairs) prefix for a kernel version
+	// This is not usually present in containers, an empty directory
 	kernelConfigPrefix = "/boot/config-"
 
 	// Directory with metadata about kernel modules (drivers/versions/params)!

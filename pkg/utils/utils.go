@@ -35,6 +35,22 @@ func SplitDelimiterList(items []string, delim string) (map[string]string, error)
 	return data, nil
 }
 
+// lookup a value, return error if not defined for either
+func LookupValue(
+	p map[string]string,
+	key1, key2 string,
+) (string, error) {
+
+	var value string
+	for _, key := range []string{key1, key2} {
+		value, ok := p[key]
+		if ok {
+			return value, nil
+		}
+	}
+	return value, fmt.Errorf("Cannot find keys %s or %s", key1, key2)
+}
+
 // ArrayContainsString determines if a string is in an array
 // We return an array of invalid names in case the calling function needs
 func StringArrayIsSubset(contenders, items []string) ([]string, bool) {
