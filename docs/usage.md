@@ -140,6 +140,23 @@ For a small experiment of using create against a set of containers and then test
 in [examples/check-lammps](examples/check-lammps). Note that we generated the actual compatibility spec and pushed with oras before running the example here! Following that, we might use the manifest in that directory to run a match. Note that since most use cases aren't checking the images in the manifest list against the host running the command, we instead
 provide the parameters about the expected runtime host to them.
 
+### Check Artifacts
+
+You can do a check to ensure that all your artifacts exist.
+
+```bash
+./bin/compspec match -i ./examples/check-lammps/manifest.yaml --check-artifacts
+```
+```console
+Checking artifacts complete. There were 0 artifacts missing.
+```
+
+If this cannot be guaranteed, you can also ask to allow failures in finding them (and those images won't be included in the match):
+
+```bash
+./bin/compspec match -i ./examples/check-lammps/manifest.yaml --allow-fail
+```
+
 ### Match without Metadata Attributes
 
 When you run match without options, all images are by default matches, hooray!

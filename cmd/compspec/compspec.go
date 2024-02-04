@@ -47,6 +47,8 @@ func main() {
 	manifestFile := matchCmd.String("i", "in", &argparse.Options{Required: true, Help: "Input manifest list yaml that contains pairs of images and artifacts"})
 	printMapping := matchCmd.Flag("p", "print", &argparse.Options{Help: "Print mapping of images to attributes only."})
 	printGraph := matchCmd.Flag("g", "print-graph", &argparse.Options{Help: "Print schema graph"})
+	checkArtifacts := matchCmd.Flag("c", "check-artifacts", &argparse.Options{Help: "Check that all artifacts exist"})
+	allowFailMatch := matchCmd.Flag("f", "allow-fail", &argparse.Options{Help: "Allow an artifact to be missing (and not included)"})
 
 	// Create arguments
 	options := createCmd.StringList("a", "append", &argparse.Options{Help: "Append one or more custom metadata fields to append"})
@@ -74,7 +76,7 @@ func main() {
 			log.Fatal(err.Error())
 		}
 	} else if matchCmd.Happened() {
-		err := match.Run(*manifestFile, *matchFields, *mediaType, *printMapping, *printGraph)
+		err := match.Run(*manifestFile, *matchFields, *mediaType, *printMapping, *printGraph, *allowFailMatch, *checkArtifacts)
 		if err != nil {
 			log.Fatal(err.Error())
 		}

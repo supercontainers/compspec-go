@@ -38,6 +38,8 @@ func Run(
 	mediaType string,
 	printMapping bool,
 	printGraph bool,
+	allowFail bool,
+	checkArtifacts bool,
 ) error {
 
 	// Default media type if one not provided
@@ -53,13 +55,15 @@ func Run(
 	if err != nil {
 		return err
 	}
-	fmt.Println(manifestList)
 
 	// Prepare a graph with our compspec schemas added
 	g, err := graph.NewGraph()
 	if err != nil {
 		return err
 	}
+
+	// Keep check of artifacts missing
+	missing := 0
 
 	// Load the compatibility specs into a lookup by image
 	// This assumes we allow one image per compability spec, not sure
@@ -69,13 +73,22 @@ func Run(
 
 		compspec, err := oras.LoadArtifact(item.Artifact, mediaType)
 		if err != nil {
-			fmt.Printf("warning, there was an issue loading the artifact for %s, skipping\n", item.Name)
+			fmt.Printf("warning, there was an issue loading the artifact for %s: %s, skipping\n", item.Name, err)
+
+			// Don't allow any artifacts to be missing, unless we are just checking
+			if !allowFail && !checkArtifacts {
+				return err
+			}
+			missing += 1
+		}
+		// If just checking artifacts, continue
+		if checkArtifacts {
+			continue
 		}
 		lookup[item.Name] = compspec
 
 		// Add schemas to the graph
 		for _, schema := range compspec.Metadata.Schemas {
-			fmt.Printf("Adding schema to graph %s\n", schema)
 			err = g.AddSchema(schema)
 			if err != nil {
 				return err
@@ -99,6 +112,11 @@ func Run(
 				err = g.AddAttribute(item.Name, compat.Name, key, value)
 			}
 		}
+	}
+
+	if checkArtifacts {
+		fmt.Printf("Checking artifacts complete. There were %d artifacts missing.\n", missing)
+		return nil
 	}
 
 	// We only want to print the mapping and exit
