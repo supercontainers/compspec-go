@@ -2,6 +2,7 @@ package system
 
 import (
 	"fmt"
+	"os/exec"
 
 	"github.com/supercontainers/compspec-go/pkg/extractor"
 	"github.com/supercontainers/compspec-go/pkg/utils"
@@ -43,5 +44,14 @@ func getArchInformation() (extractor.ExtractorSection, error) {
 		return info, err
 	}
 	info["name"] = arch
+
+	// Try to run arch command to get more details, OK if we don't have it
+	path, err := exec.LookPath("arch")
+	if err == nil {
+		output, err := utils.RunCommand([]string{path})
+		if err == nil {
+			info["arch"] = output
+		}
+	}
 	return info, nil
 }
