@@ -362,6 +362,13 @@ For example, if you want to extract metadata to your local machine, you can use 
 ./bin/compspec extract
 ```
 
+If you want to allow failures (good for development):
+
+```bash
+./bin/compspec extract --allow-fail
+```
+
+
 Or use a specific, named extractor. Each extractor is shown below (with example output). The first example (with MPI) demonstrates
 the full ability to specify:
 

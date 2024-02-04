@@ -2,6 +2,7 @@ package system
 
 import (
 	"fmt"
+	"os/exec"
 
 	"github.com/supercontainers/compspec-go/pkg/extractor"
 	"github.com/supercontainers/compspec-go/pkg/utils"
@@ -10,10 +11,11 @@ import (
 const (
 	linkerAMD64 = "/lib64/ld-linux-x86-64.so.2"
 	linkeri386  = "/lib/ld-linux.so.2"
+	linkerARM64 = "/lib/ld-linux-aarch64.so.1"
 )
 
 var (
-	linkerPaths = map[string]string{"amd64": linkerAMD64, "i386": linkeri386}
+	linkerPaths = map[string]string{"amd64": linkerAMD64, "i386": linkeri386, "arm64": linkerARM64}
 )
 
 // getOSArch determines arch based on the ld linux path
@@ -42,5 +44,14 @@ func getArchInformation() (extractor.ExtractorSection, error) {
 		return info, err
 	}
 	info["name"] = arch
+
+	// Try to run arch command to get more details, OK if we don't have it
+	path, err := exec.LookPath("arch")
+	if err == nil {
+		output, err := utils.RunCommand([]string{path})
+		if err == nil {
+			info["arch"] = output
+		}
+	}
 	return info, nil
 }

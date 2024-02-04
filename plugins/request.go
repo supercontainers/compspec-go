@@ -89,7 +89,7 @@ func (r *Result) AddCustomFields(fields []string) {
 }
 
 // Do the extraction for a plugin request, meaning across a set of plugins
-func (r *PluginsRequest) Extract() (Result, error) {
+func (r *PluginsRequest) Extract(allowFail bool) (Result, error) {
 
 	// Prepare Result
 	result := Result{}
@@ -97,8 +97,12 @@ func (r *PluginsRequest) Extract() (Result, error) {
 
 	for _, p := range *r {
 		r, err := p.Extractor.Extract(p.Sections)
-		if err != nil {
-			return result, fmt.Errorf("There was a kernel extraction error: %s\n", err)
+
+		// We can allow failure
+		if err != nil && !allowFail {
+			return result, fmt.Errorf("There was an extraction error for %s: %s\n", p.Name, err)
+		} else if err != nil && allowFail {
+			fmt.Printf("Allowing failure - ignoring extraction error for %s: %s\n", p.Name, err)
 		}
 		results[p.Name] = r
 	}
