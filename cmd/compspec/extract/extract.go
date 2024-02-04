@@ -9,7 +9,7 @@ import (
 )
 
 // Run will run an extraction of host metadata
-func Run(filename string, pluginNames []string) error {
+func Run(filename string, pluginNames []string, allowFail bool) error {
 	fmt.Printf("⭐️ Running extract...\n")
 
 	// Womp womp, we only support linux! There is no other way.
@@ -26,7 +26,10 @@ func Run(filename string, pluginNames []string) error {
 	}
 
 	// Extract data for all plugins
-	result, err := plugins.Extract()
+	result, err := plugins.Extract(allowFail)
+	if err != nil {
+		return err
+	}
 
 	// If a filename is provided, save to json
 	if filename != "" {

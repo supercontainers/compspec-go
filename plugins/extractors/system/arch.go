@@ -10,10 +10,11 @@ import (
 const (
 	linkerAMD64 = "/lib64/ld-linux-x86-64.so.2"
 	linkeri386  = "/lib/ld-linux.so.2"
+	linkerARM64 = "/lib/ld-linux-aarch64.so.1"
 )
 
 var (
-	linkerPaths = map[string]string{"amd64": linkerAMD64, "i386": linkeri386}
+	linkerPaths = map[string]string{"amd64": linkerAMD64, "i386": linkeri386, "arm64": linkerARM64}
 )
 
 // getOSArch determines arch based on the ld linux path

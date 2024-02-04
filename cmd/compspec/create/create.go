@@ -25,7 +25,7 @@ func loadRequest(filename string) (*types.CompatibilityRequest, error) {
 }
 
 // Run will create a compatibility artifact based on a request in YAML
-func Run(specname string, fields []string, saveto string) error {
+func Run(specname string, fields []string, saveto string, allowFail bool) error {
 
 	// Cut out early if a spec not provided
 	if specname == "" {
@@ -45,7 +45,10 @@ func Run(specname string, fields []string, saveto string) error {
 	}
 
 	// Finally, add custom fields and extract metadata
-	result, err := plugins.Extract()
+	result, err := plugins.Extract(allowFail)
+	if err != nil {
+		return err
+	}
 
 	// Update with custom fields (either new or overwrite)
 	result.AddCustomFields(fields)

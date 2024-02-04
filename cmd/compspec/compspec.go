@@ -40,6 +40,7 @@ func main() {
 
 	// Extract arguments
 	filename := extractCmd.String("o", "out", &argparse.Options{Help: "Save extraction to json file"})
+	allowFail := extractCmd.Flag("f", "allow-fail", &argparse.Options{Help: "Allow any specific extractor to fail (and continue extraction)"})
 
 	// Match arguments
 	matchFields := matchCmd.StringList("m", "match", &argparse.Options{Help: "One or more key value pairs to match"})
@@ -52,6 +53,7 @@ func main() {
 	specname := createCmd.String("i", "in", &argparse.Options{Required: true, Help: "Input yaml that contains spec for creation"})
 	specfile := createCmd.String("o", "out", &argparse.Options{Help: "Save compatibility json artifact to this file"})
 	mediaType := createCmd.String("m", "media-type", &argparse.Options{Help: "The expected media-type for the compatibility artifact"})
+	allowFailCreate := createCmd.Flag("f", "allow-fail", &argparse.Options{Help: "Allow any specific extractor to fail (and continue extraction)"})
 
 	// Now parse the arguments
 	err := parser.Parse(os.Args)
@@ -62,12 +64,12 @@ func main() {
 	}
 
 	if extractCmd.Happened() {
-		err := extract.Run(*filename, *pluginNames)
+		err := extract.Run(*filename, *pluginNames, *allowFail)
 		if err != nil {
 			log.Fatalf("Issue with extraction: %s\n", err)
 		}
 	} else if createCmd.Happened() {
-		err := create.Run(*specname, *options, *specfile)
+		err := create.Run(*specname, *options, *specfile, *allowFailCreate)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
