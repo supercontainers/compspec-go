@@ -5,8 +5,6 @@ import (
 	"os"
 	"strings"
 
-	// TODO this library is a bit old, but seems to do the job for now
-
 	"github.com/supercontainers/compspec-go/pkg/extractor"
 	"github.com/supercontainers/compspec-go/pkg/utils"
 )
