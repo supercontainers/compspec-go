@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io"
 	"strings"
 
@@ -46,7 +45,6 @@ func LoadArtifact(uri string, mediaType string) (types.CompatibilityRequest, err
 	defer readCloser.Close()
 
 	// Read the pulled content
-	fmt.Printf("Found digest: %s for %s\n", desc.Digest.String(), tag)
 	manifestBytes, err := content.ReadAll(readCloser, desc)
 	if err != nil {
 		return request, err
