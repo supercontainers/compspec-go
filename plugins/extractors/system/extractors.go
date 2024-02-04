@@ -92,7 +92,7 @@ func getCpuVariant(p map[string]string) (string, error) {
 // Get the CPU vendor, currently supports x86 and arm
 func getCpuVendor(p map[string]string) (string, error) {
 
-	vendor, err := utils.LookupValue(p, "vendor_id", "cpu_implementation")
+	vendor, err := utils.LookupValue(p, "vendor_id", "cpu_implementer")
 	if err != nil {
 		return vendor, err
 	}
