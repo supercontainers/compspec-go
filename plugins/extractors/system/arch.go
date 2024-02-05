@@ -23,7 +23,7 @@ func getOsArch() (string, error) {
 
 	// Detect OS architecture based on presence of this file
 	for arch, path := range linkerPaths {
-		exists, err := utils.FileExists(path)
+		exists, err := utils.PathExists(path)
 		if err != nil {
 			return "", err
 		}

@@ -8,6 +8,7 @@ import (
 	"github.com/supercontainers/compspec-go/pkg/graph"
 	"github.com/supercontainers/compspec-go/pkg/oras"
 	"github.com/supercontainers/compspec-go/pkg/types"
+	"github.com/supercontainers/compspec-go/pkg/utils"
 	"sigs.k8s.io/yaml"
 )
 
@@ -36,10 +37,13 @@ func Run(
 	manifestFile string,
 	hostFields []string,
 	mediaType string,
+	cachePath string,
 	printMapping bool,
 	printGraph bool,
 	allowFail bool,
 	checkArtifacts bool,
+	randomize bool,
+	single bool,
 ) error {
 
 	// Default media type if one not provided
@@ -71,7 +75,7 @@ func Run(
 	lookup := map[string]types.CompatibilityRequest{}
 	for _, item := range manifestList.Images {
 
-		compspec, err := oras.LoadArtifact(item.Artifact, mediaType)
+		compspec, err := oras.LoadArtifact(item.Artifact, mediaType, cachePath)
 		if err != nil {
 			fmt.Printf("warning, there was an issue loading the artifact for %s: %s, skipping\n", item.Name, err)
 
@@ -142,11 +146,23 @@ func Run(
 	}
 	if len(matches) == 0 {
 		fmt.Println("There was no match. Try changig your constaints.")
-	} else {
-		fmt.Println(" --- Found matches ---")
-		for _, match := range matches {
-			fmt.Println(match)
-		}
+		return nil
 	}
+
+	// Do we want to randomize (randomly shuffle the list)?
+	if randomize {
+		matches = utils.RandomSort(matches)
+	}
+
+	// Do we want just one match?
+	if single && len(matches) > 0 {
+		matches = []string{matches[0]}
+	}
+
+	fmt.Println(" --- Found matches ---")
+	for _, match := range matches {
+		fmt.Println(match)
+	}
+
 	return nil
 }
