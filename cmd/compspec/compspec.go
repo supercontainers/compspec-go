@@ -49,6 +49,9 @@ func main() {
 	printGraph := matchCmd.Flag("g", "print-graph", &argparse.Options{Help: "Print schema graph"})
 	checkArtifacts := matchCmd.Flag("c", "check-artifacts", &argparse.Options{Help: "Check that all artifacts exist"})
 	allowFailMatch := matchCmd.Flag("f", "allow-fail", &argparse.Options{Help: "Allow an artifact to be missing (and not included)"})
+	randomize := matchCmd.Flag("r", "randomize", &argparse.Options{Help: "Shuffle match results in random order"})
+	single := matchCmd.Flag("s", "single", &argparse.Options{Help: "Only return a single result"})
+	cachePath := matchCmd.String("", "cache", &argparse.Options{Help: "A path to a cache for artifacts"})
 
 	// Create arguments
 	options := createCmd.StringList("a", "append", &argparse.Options{Help: "Append one or more custom metadata fields to append"})
@@ -76,11 +79,21 @@ func main() {
 			log.Fatal(err.Error())
 		}
 	} else if matchCmd.Happened() {
-		err := match.Run(*manifestFile, *matchFields, *mediaType, *printMapping, *printGraph, *allowFailMatch, *checkArtifacts)
+		err := match.Run(
+			*manifestFile,
+			*matchFields,
+			*mediaType,
+			*cachePath,
+			*printMapping,
+			*printGraph,
+			*allowFailMatch,
+			*checkArtifacts,
+			*randomize,
+			*single,
+		)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
-
 	} else if listCmd.Happened() {
 		err := list.Run(*pluginNames)
 		if err != nil {

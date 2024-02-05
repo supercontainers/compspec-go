@@ -4,18 +4,19 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"math/rand"
 	"os"
 	"strings"
 )
 
-// FileExists determines if a file exists
-func FileExists(path string) (bool, error) {
+// PathExists determines if a path exists
+func PathExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
 			return false, nil
 		}
-		return true, fmt.Errorf("warning: file exists but another error happened (debug): %s", err)
+		return true, fmt.Errorf("warning: exists but another error happened (debug): %s", err)
 	}
 	return true, nil
 }
@@ -106,4 +107,13 @@ func ParseConfigFile(path, comment, delim string) (map[string]string, error) {
 		}
 	}
 	return data, nil
+}
+
+// RandomSort an array of strings, in place
+func RandomSort(items []string) []string {
+	for i := range items {
+		j := rand.Intn(i + 1)
+		items[i], items[j] = items[j], items[i]
+	}
+	return items
 }

@@ -204,6 +204,46 @@ ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-8-amd64
 
 That is very simple, but should serve our purposes for now.
 
+### Match with randomize or single
+
+You can choose to shuffle the results:
+
+```bash
+$ ./bin/compspec match -i ./examples/check-lammps/manifest.yaml --randomize
+```
+```console
+Schema io.archspec is being added to the graph
+Schema org.supercontainers is being added to the graph
+No field criteria provided, all images are matches.
+ --- Found matches ---
+ghcr.io/rse-ops/lammps-matrix:openmpi-ubuntu-gpu-20.04
+ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64
+ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-8-amd64
+ghcr.io/rse-ops/lammps-matrix:openmpi-ubuntu-gpu-22.04
+```
+Or do the same, but ask for only one result (note we might) change this to N results depending on use cases:
+
+```bash
+$ ./bin/compspec match -i ./examples/check-lammps/manifest.yaml --randomize --single
+```
+```console
+Schema io.archspec is being added to the graph
+Schema org.supercontainers is being added to the graph
+No field criteria provided, all images are matches.
+ --- Found matches ---
+ghcr.io/rse-ops/lammps-matrix:intel-mpi-rocky-9-amd64
+```
+
+### Match and use cache
+
+If you intend to run a match request many times (using repeated images) it's good practice to use a cache. This means you'll look in the cache before asking a registry, and save after if it doesn't exist. The directory must exist.
+
+```bash
+mkdir -p ./cache
+./bin/compspec match -i ./examples/check-lammps/manifest.yaml --cache ./cache
+```
+
+
 
 ### Match to print Metadata attributes
 
