@@ -243,7 +243,19 @@ mkdir -p ./cache
 ./bin/compspec match -i ./examples/check-lammps/manifest.yaml --cache ./cache
 ```
 
+You can also save the graph to file:
 
+```bash
+./bin/compspec match -i ./examples/check-lammps/manifest.yaml --cache ./cache --cache-graph ./cache/lammps-experiment.json
+```
+
+You can then use that cached graph later (NOTE this is at your own discretion knowing the schemas needed).
+
+```bash
+./bin/compspec match -i ./examples/check-lammps/manifest.yaml --cache ./cache --cache-graph ./cache/lammps-experiment.json
+```
+
+Likely we will make tools to visualize it that can just show JGF!
 
 ### Match to print Metadata attributes
 
