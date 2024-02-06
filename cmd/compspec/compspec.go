@@ -46,12 +46,13 @@ func main() {
 	matchFields := matchCmd.StringList("m", "match", &argparse.Options{Help: "One or more key value pairs to match"})
 	manifestFile := matchCmd.String("i", "in", &argparse.Options{Required: true, Help: "Input manifest list yaml that contains pairs of images and artifacts"})
 	printMapping := matchCmd.Flag("p", "print", &argparse.Options{Help: "Print mapping of images to attributes only."})
-	printGraph := matchCmd.Flag("g", "print-graph", &argparse.Options{Help: "Print schema graph"})
+	printGraph := matchCmd.Flag("", "print-graph", &argparse.Options{Help: "Print schema graph"})
 	checkArtifacts := matchCmd.Flag("c", "check-artifacts", &argparse.Options{Help: "Check that all artifacts exist"})
 	allowFailMatch := matchCmd.Flag("f", "allow-fail", &argparse.Options{Help: "Allow an artifact to be missing (and not included)"})
 	randomize := matchCmd.Flag("r", "randomize", &argparse.Options{Help: "Shuffle match results in random order"})
 	single := matchCmd.Flag("s", "single", &argparse.Options{Help: "Only return a single result"})
 	cachePath := matchCmd.String("", "cache", &argparse.Options{Help: "A path to a cache for artifacts"})
+	saveGraph := matchCmd.String("", "cache-graph", &argparse.Options{Help: "Load or use a cached graph"})
 
 	// Create arguments
 	options := createCmd.StringList("a", "append", &argparse.Options{Help: "Append one or more custom metadata fields to append"})
@@ -84,6 +85,7 @@ func main() {
 			*matchFields,
 			*mediaType,
 			*cachePath,
+			*saveGraph,
 			*printMapping,
 			*printGraph,
 			*allowFailMatch,

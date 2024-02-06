@@ -1,7 +1,9 @@
 package graph
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/converged-computing/jsongraph-go/jsongraph/v2/graph"
@@ -220,6 +222,61 @@ func (c *CompatibilityGraph) Match(fields []string) ([]string, error) {
 		}
 	}
 	return matches.List(), nil
+}
+
+// Load graph from a cached file.
+// This assumes you know what you are doing, meaning
+// the schemas are not changing
+func (c *CompatibilityGraph) LoadGraph(path string) (bool, error) {
+	exists, err := utils.PathExists(path)
+
+	// Some error, do not continue!
+	if err != nil {
+		return exists, err
+	}
+	// No error, but doesn't exist (will still load)
+	if !exists {
+		return exists, nil
+	}
+
+	// If we get here, load in!
+	fd, err := os.Open(path)
+	if err != nil {
+		return exists, err
+	}
+	graph := graph.Graph{}
+	jsonParser := json.NewDecoder(fd)
+	err = jsonParser.Decode(&graph)
+	if err != nil {
+		return exists, err
+	}
+
+	// Go through the edges and add the root nodes
+	c.Graph = graph
+	return true, nil
+}
+
+// Save graph to a cached file
+func (c *CompatibilityGraph) SaveGraph(path string) error {
+	exists, err := utils.PathExists(path)
+	if err != nil {
+		return err
+	}
+	// Don't overwrite if exists
+	if exists {
+		fmt.Printf("Graph %s already exists, will not overwrite\n", path)
+		return nil
+	}
+	content, err := json.MarshalIndent(c.Graph, "", "  ")
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Saving graph to %s\n", path)
+	err = os.WriteFile(path, content, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // AddSchema by url to the graph

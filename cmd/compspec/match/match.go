@@ -38,6 +38,7 @@ func Run(
 	hostFields []string,
 	mediaType string,
 	cachePath string,
+	graphPath string,
 	printMapping bool,
 	printGraph bool,
 	allowFail bool,
@@ -66,6 +67,17 @@ func Run(
 		return err
 	}
 
+	// If we are given a graph path and it exists, load it
+	// This won't fail if it does not exist, but will error
+	// with another issue
+	exists := false
+	if graphPath != "" {
+		exists, err = g.LoadGraph(graphPath)
+		if err != nil {
+			return err
+		}
+	}
+
 	// Keep check of artifacts missing
 	missing := 0
 
@@ -91,11 +103,13 @@ func Run(
 		}
 		lookup[item.Name] = compspec
 
-		// Add schemas to the graph
-		for _, schema := range compspec.Metadata.Schemas {
-			err = g.AddSchema(schema)
-			if err != nil {
-				return err
+		// Add schemas to the graph TODO, allow caching
+		if !exists {
+			for _, schema := range compspec.Metadata.Schemas {
+				err = g.AddSchema(schema)
+				if err != nil {
+					return err
+				}
 			}
 		}
 
@@ -115,6 +129,14 @@ func Run(
 			for key, value := range compat.Attributes {
 				err = g.AddAttribute(item.Name, compat.Name, key, value)
 			}
+		}
+	}
+
+	// Save graph if given a file
+	if graphPath != "" {
+		err = g.SaveGraph(graphPath)
+		if err != nil {
+			return err
 		}
 	}
 
