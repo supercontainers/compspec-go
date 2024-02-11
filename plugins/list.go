@@ -18,16 +18,24 @@ func (r *PluginsRequest) List() error {
 
 	// keep count of plugins (just extractors for now)
 	count := 0
+	extractorCount := 0
 
 	// TODO add description column
 	for _, p := range *r {
-		for _, section := range p.Extractor.Sections() {
+		extractorCount += 1
+		for i, section := range p.Extractor.Sections() {
+
+			// Add the extractor plugin description only for first in the list
+			if i == 0 {
+				t.AppendSeparator()
+				t.AppendRow(table.Row{p.Extractor.Description(), "", "", ""})
+			}
 			count += 1
 			t.AppendRow([]interface{}{"", "extractor", p.Name, section})
 		}
 	}
 	t.AppendSeparator()
-	t.AppendFooter(table.Row{"Total", count, "", ""})
+	t.AppendFooter(table.Row{"Total", "", extractorCount, count})
 	t.SetStyle(table.StyleColoredCyanWhiteOnBlack)
 	t.Render()
 	return nil

@@ -8,8 +8,9 @@ import (
 )
 
 const (
-	ExtractorName = "library"
-	MPISection    = "mpi"
+	ExtractorName        = "library"
+	ExtractorDescription = "generic library extractor"
+	MPISection           = "mpi"
 )
 
 var (
@@ -26,6 +27,10 @@ func (e LibraryExtractor) Name() string {
 
 func (e LibraryExtractor) Sections() []string {
 	return e.sections
+}
+
+func (e LibraryExtractor) Description() string {
+	return ExtractorDescription
 }
 
 // Validate ensures that the sections provided are in the list we know

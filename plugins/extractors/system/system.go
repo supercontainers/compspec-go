@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	ExtractorName = "system"
+	ExtractorName        = "system"
+	ExtractorDescription = "generic system extractor"
 
 	// Just cores, etc.
 	CPUSection       = "cpu"
@@ -27,6 +28,10 @@ type SystemExtractor struct {
 
 func (e SystemExtractor) Name() string {
 	return ExtractorName
+}
+
+func (e SystemExtractor) Description() string {
+	return ExtractorDescription
 }
 
 func (e SystemExtractor) Sections() []string {

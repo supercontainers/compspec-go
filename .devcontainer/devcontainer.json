@@ -8,6 +8,9 @@
       "settings": {
         "terminal.integrated.defaultProfile.linux": "bash"
       },
+      "extensions": [
+        "golang.go"
+      ],
     }
   },
   "postStartCommand": "git config --global --add safe.directory /workspaces/compspec-go"

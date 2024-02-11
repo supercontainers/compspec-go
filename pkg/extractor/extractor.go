@@ -11,6 +11,7 @@ import (
 //	a validate function to typically check that the plugin is valid
 type Extractor interface {
 	Name() string
+	Description() string
 	Extract(interface{}) (ExtractorData, error)
 	Validate() bool
 	Sections() []string
@@ -42,7 +43,7 @@ func (e *ExtractorData) ToJson() (string, error) {
 	return string(b), err
 }
 
-// An extractor section corresponds to a named group of annotations
+// An extractor section corresponds to a named group of attributes
 type ExtractorSection map[string]string
 
 // Extractors is a lookup of registered extractors by name

@@ -3,17 +3,19 @@ package plugins
 import (
 	"strings"
 
-	"github.com/supercontainers/compspec-go/plugins/extractors/library"
 	"github.com/supercontainers/compspec-go/plugins/extractors/kernel"
+	"github.com/supercontainers/compspec-go/plugins/extractors/library"
+	"github.com/supercontainers/compspec-go/plugins/extractors/nfd"
 	"github.com/supercontainers/compspec-go/plugins/extractors/system"
 )
 
 // Add new plugin names here. They should correspond with the package name, then NewPlugin()
 var (
-	KernelExtractor = "kernel"
-	SystemExtractor = "system"
+	KernelExtractor  = "kernel"
+	SystemExtractor  = "system"
 	LibraryExtractor = "library"
-	pluginNames     = []string{KernelExtractor, SystemExtractor, LibraryExtractor}
+	NFDExtractor     = "nfd"
+	pluginNames      = []string{KernelExtractor, SystemExtractor, LibraryExtractor, NFDExtractor}
 )
 
 // parseSections will return sections from the name string
@@ -57,6 +59,16 @@ func GetPlugins(names []string) (PluginsRequest, error) {
 
 		if strings.HasPrefix(name, KernelExtractor) {
 			p, err := kernel.NewPlugin(sections)
+			if err != nil {
+				return request, err
+			}
+			// Save the name, the instantiated interface, and sections
+			pr := PluginRequest{Name: name, Extractor: p, Sections: sections}
+			request = append(request, pr)
+		}
+
+		if strings.HasPrefix(name, NFDExtractor) {
+			p, err := nfd.NewPlugin(sections)
 			if err != nil {
 				return request, err
 			}
