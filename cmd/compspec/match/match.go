@@ -5,15 +5,15 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/supercontainers/compspec-go/pkg/graph"
-	"github.com/supercontainers/compspec-go/pkg/oras"
-	"github.com/supercontainers/compspec-go/pkg/types"
-	"github.com/supercontainers/compspec-go/pkg/utils"
+	"github.com/compspec/compspec-go/pkg/graph"
+	"github.com/compspec/compspec-go/pkg/oras"
+	"github.com/compspec/compspec-go/pkg/types"
+	"github.com/compspec/compspec-go/pkg/utils"
 	"sigs.k8s.io/yaml"
 )
 
 var (
-	defaultMediaType = "application/org.supercontainers.compspec"
+	defaultMediaType = "application/org.compspec"
 )
 
 // loadManifest loads the manifest into a ManifestList

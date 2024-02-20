@@ -1,7 +1,7 @@
 package list
 
 import (
-	p "github.com/supercontainers/compspec-go/plugins"
+	p "github.com/compspec/compspec-go/plugins"
 )
 
 // Run will list the extractor names and sections known

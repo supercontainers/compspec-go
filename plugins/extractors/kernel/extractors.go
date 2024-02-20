@@ -5,9 +5,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/utils"
 	kernelParser "github.com/moby/moby/pkg/parsers/kernel"
-	"github.com/supercontainers/compspec-go/pkg/extractor"
-	"github.com/supercontainers/compspec-go/pkg/utils"
 )
 
 // Locations to get information about the kernel
