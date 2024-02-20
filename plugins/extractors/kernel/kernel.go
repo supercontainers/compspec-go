@@ -9,6 +9,7 @@ import (
 
 const (
 	ExtractorName        = "kernel"
+	ExtractorDescription = "generic kernel extractor"
 	KernelBootSection    = "boot"
 	KernelConfigSection  = "config"
 	KernelModulesSection = "modules"
@@ -20,6 +21,10 @@ var (
 
 type KernelExtractor struct {
 	sections []string
+}
+
+func (e KernelExtractor) Description() string {
+	return ExtractorDescription
 }
 
 func (e KernelExtractor) Sections() []string {

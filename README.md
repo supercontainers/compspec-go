@@ -14,11 +14,11 @@ This is a prototype compatibility checking tool. Right now our aim is to use in 
 
 ## TODO
 
+ - add descriptions to sections
+ - make extractor sections into interface
  - metadata namespace and exposure: someone writing a spec to create an artifact needs to know the extract namespace (and what is available) for the mapping.
- - create: the final step of create should be validation of the spec with the jsonSchema linked (not done yet)
  - tests: matrix that has several different flavors of builds, generating compspec json output to validate generation and correctness
  - likely we want a common configuration file to take an extraction -> check recipe
- - need to develop check plugin family
  - todo thinking around manifest.yaml that has listing of images / artifacts
 
 ### Extractors wanted / needed

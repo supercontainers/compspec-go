@@ -26,8 +26,8 @@ RUN apt-get update && \
 ENV LD_LIBRARY_PATH=/usr/lib:/usr/local/lib
 ENV PATH=$PATH:/workspaces/compspec-go/bin
 
-RUN wget --no-check-certificate https://go.dev/dl/go1.20.10.linux-amd64.tar.gz && tar -xvf go1.20.10.linux-amd64.tar.gz && \
-         mv go /usr/local && rm go1.20.10.linux-amd64.tar.gz
+RUN wget --no-check-certificate https://go.dev/dl/go1.21.7.linux-amd64.tar.gz && tar -xvf go1.21.7.linux-amd64.tar.gz && \
+         mv go /usr/local && rm go1.21.7.linux-amd64.tar.gz
 
 ENV PATH=$PATH:/usr/local/go/bin:/home/vscode/go/bin
 
