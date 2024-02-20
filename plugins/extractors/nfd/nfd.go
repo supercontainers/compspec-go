@@ -17,8 +17,8 @@ import (
 	_ "sigs.k8s.io/node-feature-discovery/source/system"
 	_ "sigs.k8s.io/node-feature-discovery/source/usb"
 
-	"github.com/supercontainers/compspec-go/pkg/extractor"
-	"github.com/supercontainers/compspec-go/pkg/utils"
+	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/utils"
 )
 
 const (

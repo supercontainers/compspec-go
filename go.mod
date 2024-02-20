@@ -1,4 +1,4 @@
-module github.com/supercontainers/compspec-go
+module github.com/compspec/compspec-go
 
 go 1.21
 

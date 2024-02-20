@@ -5,7 +5,7 @@ import (
 	"os"
 	"runtime"
 
-	p "github.com/supercontainers/compspec-go/plugins"
+	p "github.com/compspec/compspec-go/plugins"
 )
 
 // Run will run an extraction of host metadata

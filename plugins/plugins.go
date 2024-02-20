@@ -3,10 +3,10 @@ package plugins
 import (
 	"strings"
 
-	"github.com/supercontainers/compspec-go/plugins/extractors/kernel"
-	"github.com/supercontainers/compspec-go/plugins/extractors/library"
-	"github.com/supercontainers/compspec-go/plugins/extractors/nfd"
-	"github.com/supercontainers/compspec-go/plugins/extractors/system"
+	"github.com/compspec/compspec-go/plugins/extractors/kernel"
+	"github.com/compspec/compspec-go/plugins/extractors/library"
+	"github.com/compspec/compspec-go/plugins/extractors/nfd"
+	"github.com/compspec/compspec-go/plugins/extractors/system"
 )
 
 // Add new plugin names here. They should correspond with the package name, then NewPlugin()

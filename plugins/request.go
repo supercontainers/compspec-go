@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/supercontainers/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/extractor"
 )
 
 // A plugin request has a Name and sections

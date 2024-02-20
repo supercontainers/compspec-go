@@ -10,9 +10,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/compspec/compspec-go/pkg/types"
+	"github.com/compspec/compspec-go/pkg/utils"
 	oci "github.com/opencontainers/image-spec/specs-go/v1"
-	"github.com/supercontainers/compspec-go/pkg/types"
-	"github.com/supercontainers/compspec-go/pkg/utils"
 	"oras.land/oras-go/v2/content"
 	"oras.land/oras-go/v2/registry/remote"
 	"sigs.k8s.io/yaml"

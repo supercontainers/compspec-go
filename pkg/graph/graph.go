@@ -6,9 +6,9 @@ import (
 	"os"
 	"strings"
 
+	"github.com/compspec/compspec-go/pkg/utils"
 	"github.com/converged-computing/jsongraph-go/jsongraph/v2/graph"
 	jgf "github.com/converged-computing/jsongraph-go/jsongraph/v2/graph"
-	"github.com/supercontainers/compspec-go/pkg/utils"
 
 	"github.com/scylladb/go-set/strset"
 )

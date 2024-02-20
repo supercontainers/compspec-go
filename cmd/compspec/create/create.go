@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/supercontainers/compspec-go/pkg/types"
-	p "github.com/supercontainers/compspec-go/plugins"
+	"github.com/compspec/compspec-go/pkg/types"
+	p "github.com/compspec/compspec-go/plugins"
 	"sigs.k8s.io/yaml"
 )
 

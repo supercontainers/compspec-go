@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/supercontainers/compspec-go/pkg/extractor"
-	"github.com/supercontainers/compspec-go/pkg/utils"
+	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/utils"
 )
 
 const (

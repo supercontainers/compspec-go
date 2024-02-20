@@ -6,11 +6,11 @@ import (
 	"os"
 
 	"github.com/akamensky/argparse"
-	"github.com/supercontainers/compspec-go/cmd/compspec/create"
-	"github.com/supercontainers/compspec-go/cmd/compspec/extract"
-	"github.com/supercontainers/compspec-go/cmd/compspec/list"
-	"github.com/supercontainers/compspec-go/cmd/compspec/match"
-	"github.com/supercontainers/compspec-go/pkg/types"
+	"github.com/compspec/compspec-go/cmd/compspec/create"
+	"github.com/compspec/compspec-go/cmd/compspec/extract"
+	"github.com/compspec/compspec-go/cmd/compspec/list"
+	"github.com/compspec/compspec-go/cmd/compspec/match"
+	"github.com/compspec/compspec-go/pkg/types"
 )
 
 // I know this text is terrible, just having fun for now
