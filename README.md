@@ -12,6 +12,27 @@ This is a prototype compatibility checking tool. Right now our aim is to use in 
  - I'm starting with just Linux. I know there are those "other" platforms, but if it doesn't run on HPC or Kubernetes easily I'm not super interested (ahem, Mac and Windows)!
  - not all extractors work in containers (e.g., kernel needs to be on the host)
 
+Note that for development we are using nfd-source that does not require kubernetes:
+
+```bash
+go get -u github.com/converged-computing/nfd-source/source@0.0.1
+```
+
+There is some bug with installing the traditional way that I can look into later:
+
+```
+github.com/compspec/compspec-go/plugins/extractors/nfd imports
+        github.com/converged-computing/nfd-source/source: no matching versions for query "latest"
+```
+
+And moving forward we will be working from this WIP branch:
+
+```bash
+go get -u github.com/converged-computing/nfd-source/source@35294a0e91702fc0c9dcac48c3013a705625314b
+```
+
+Note that the above is the main branch on February 22, 2024!
+
 ## TODO
 
  - add descriptions to sections

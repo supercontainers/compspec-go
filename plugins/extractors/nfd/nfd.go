@@ -3,19 +3,18 @@ package nfd
 import (
 	"fmt"
 
-	source "sigs.k8s.io/node-feature-discovery/source"
+	source "github.com/converged-computing/nfd-source/source"
 
 	// Note that "fake" is removed from here
-	_ "sigs.k8s.io/node-feature-discovery/source/cpu"
-	_ "sigs.k8s.io/node-feature-discovery/source/custom"
-	_ "sigs.k8s.io/node-feature-discovery/source/kernel"
-	_ "sigs.k8s.io/node-feature-discovery/source/local"
-	_ "sigs.k8s.io/node-feature-discovery/source/memory"
-	_ "sigs.k8s.io/node-feature-discovery/source/network"
-	_ "sigs.k8s.io/node-feature-discovery/source/pci"
-	_ "sigs.k8s.io/node-feature-discovery/source/storage"
-	_ "sigs.k8s.io/node-feature-discovery/source/system"
-	_ "sigs.k8s.io/node-feature-discovery/source/usb"
+	_ "github.com/converged-computing/nfd-source/source/cpu"
+	_ "github.com/converged-computing/nfd-source/source/kernel"
+	_ "github.com/converged-computing/nfd-source/source/local"
+	_ "github.com/converged-computing/nfd-source/source/memory"
+	_ "github.com/converged-computing/nfd-source/source/network"
+	_ "github.com/converged-computing/nfd-source/source/pci"
+	_ "github.com/converged-computing/nfd-source/source/storage"
+	_ "github.com/converged-computing/nfd-source/source/system"
+	_ "github.com/converged-computing/nfd-source/source/usb"
 
 	"github.com/compspec/compspec-go/pkg/extractor"
 	"github.com/compspec/compspec-go/pkg/utils"
@@ -29,7 +28,6 @@ const (
 	CPUSection = "cpu"
 
 	// TODO can we do a check that this is desired / enabled before running?
-	CustomSection  = "custom"
 	KernelSection  = "kernel"
 	LocalSection   = "local"
 	MemorySection  = "memory"
@@ -43,7 +41,6 @@ const (
 var (
 	validSections = []string{
 		CPUSection,
-		CustomSection,
 		KernelSection,
 		LocalSection,
 		MemorySection,
