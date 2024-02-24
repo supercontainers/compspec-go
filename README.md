@@ -28,7 +28,8 @@ github.com/compspec/compspec-go/plugins/extractors/nfd imports
 And moving forward we will be working from this WIP branch:
 
 ```bash
-go get -u github.com/converged-computing/nfd-source/source@35294a0e91702fc0c9dcac48c3013a705625314b
+# This is the develop branch
+go get -u github.com/converged-computing/nfd-source/source@20d686e64926b80421637e82fb68e6c5f3f9242a
 ```
 
 Note that the above is the main branch on February 22, 2024!

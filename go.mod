@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/akamensky/argparse v1.4.0
 	github.com/converged-computing/jsongraph-go v0.0.0-20231221142916-249fef6889b3
-	github.com/converged-computing/nfd-source v0.0.0-20240222201246-35294a0e9170
+	github.com/converged-computing/nfd-source v0.0.0-20240224025007-20d686e64926
 	github.com/jedib0t/go-pretty/v6 v6.5.4
 	github.com/moby/moby v25.0.3+incompatible
 	github.com/opencontainers/image-spec v1.1.0
@@ -33,7 +33,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/stretchr/objx v0.5.1 // indirect
 	github.com/stretchr/testify v1.8.4 // indirect
-	golang.org/x/exp v0.0.0-20240213143201-ec583247a57a // indirect
+	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gotest.tools/v3 v3.5.1 // indirect

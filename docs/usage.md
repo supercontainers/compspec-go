@@ -54,17 +54,33 @@ The list command lists each extractor, and sections available for it.
 $ ./bin/compspec list
 ```
 ```console
- Compatibility Plugins               
-        TYPE      NAME     SECTION   
-        extractor  kernel   boot      
-        extractor  kernel   config    
-        extractor  kernel   modules   
-        extractor  system   cpu       
-        extractor  system   processor 
-        extractor  system   os        
-        extractor  system   arch      
-        extractor  library  mpi       
- TOTAL  8                            
+ Compatibility Plugins                                    
+                            TYPE       NAME     SECTION   
+ generic kernel extractor                                 
+                            extractor  kernel   boot      
+                            extractor  kernel   config    
+                            extractor  kernel   modules   
+----------------------------------------------------------
+ generic system extractor                                 
+                            extractor  system   processor 
+                            extractor  system   os        
+                            extractor  system   arch      
+                            extractor  system   memory    
+----------------------------------------------------------
+ generic library extractor                                
+                            extractor  library  mpi       
+----------------------------------------------------------
+ node feature discovery                                   
+                            extractor  nfd      cpu       
+                            extractor  nfd      kernel    
+                            extractor  nfd      local     
+                            extractor  nfd      memory    
+                            extractor  nfd      network   
+                            extractor  nfd      pci       
+                            extractor  nfd      storage   
+                            extractor  nfd      system    
+                            extractor  nfd      usb       
+ TOTAL                                 4        17        
 ```
 
 Note that we will eventually add a description column - it's not really warranted yet!
@@ -451,9 +467,9 @@ the full ability to specify:
 Current Extractors include:
 
  - Library: library-specific metadata (e.g., mpi)
- - System: system-specific metadata (e.g., processor, cpu, arch, os)
+ - System: system-specific metadata (e.g., processor, cpu, arch, os, memory)
  - Kernel: kernel-speific metadata (e.g., boot, config, modules)
-
+ - Node Feature Discovery: uses the [source](https://github.com/converged-computing/nfd-source) of NFD to derive metadata across many domains (cpu, kernel, local, memory, network, pci, storage, system, usb)
 
 #### Library
 
@@ -508,6 +524,7 @@ The system extractor supports three sections
  - processor: detailed information on every processor
  - os: operating system information
  - arch: architecture
+ - memory: parses /proc/meminfo and gives results primarily in KB
 
 For example:
 

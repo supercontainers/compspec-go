@@ -16,10 +16,11 @@ const (
 	ProcessorSection = "processor"
 	ArchSection      = "arch"
 	OsSection        = "os"
+	MemorySection    = "memory"
 )
 
 var (
-	validSections = []string{ProcessorSection, OsSection, ArchSection}
+	validSections = []string{ProcessorSection, OsSection, ArchSection, MemorySection}
 )
 
 type SystemExtractor struct {
@@ -78,6 +79,14 @@ func (e SystemExtractor) Extract(interface{}) (extractor.ExtractorData, error) {
 			sections[ArchSection] = section
 		}
 
+		if name == MemorySection {
+			section, err := getMemoryInformation()
+			if err != nil {
+				return data, err
+			}
+			sections[MemorySection] = section
+		}
+
 	}
 	data.Sections = sections
 	return data, nil
@@ -90,7 +99,7 @@ func NewPlugin(sections []string) (extractor.Extractor, error) {
 	}
 	e := SystemExtractor{sections: sections}
 	if !e.Validate() {
-		return nil, fmt.Errorf("plugin %s is not valid\n", e.Name())
+		return nil, fmt.Errorf("plugin %s is not valid", e.Name())
 	}
 	return e, nil
 }
