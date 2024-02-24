@@ -87,11 +87,19 @@ Note that we will eventually add a description column - it's not really warrante
 
 ## Create
 
-The create command is how you take a compatibility request, or a YAML file that has a mapping between the extractors defined by this tool and your compatibility metadata namespace, and generate an artifact. The artifact typically will be a JSON dump of key value pairs, scoped under different namespaces, that you might push to a registry to live alongside a container image, and with the intention to eventually use it to check compatiility against a new system. To run create
-we can use the example in the top level repository:
+The create command handles two kinds of creation (sub-commands):
+
+ - **artifact**: create a compatibility artifact to describe an environment or application
+ - **nodes** create a json graph format summary of nodes (a directory with one or more extracted metadata JSON files with node metadata)
+
+The artifact case is described here. For the node case, you can read about it in the [rainbow scheduler](rainbow) documentation.
+
+### Artifact
+
+The create artifact command is how you take a compatibility request, or a YAML file that has a mapping between the extractors defined by this tool and your compatibility metadata namespace, and generate an artifact. The artifact typically will be a JSON dump of key value pairs, scoped under different namespaces, that you might push to a registry to live alongside a container image, and with the intention to eventually use it to check compatiility against a new system. To run create we can use the example in the top level repository:
 
 ```bash
-./bin/compspec create --in ./examples/lammps-experiment.yaml
+./bin/compspec create artifact --in ./examples/lammps-experiment.yaml
 ```
 
 Note that you'll see some errors about fields not being found! This is because we've implemented this for the fields to be added custom, on the command line.
@@ -99,7 +107,7 @@ The idea here is that you can add custom metadata fields during your build, whic
 
 ```bash
 # a stands for "append" and it can write a new field or overwrite an existing one
-./bin/compspec create --in ./examples/lammps-experiment.yaml -a custom.gpu.available=yes
+./bin/compspec create artifact --in ./examples/lammps-experiment.yaml -a custom.gpu.available=yes
 ```
 ```console
 {
@@ -143,7 +151,7 @@ Awesome! That, as simple as it is, is our compatibility artifact. I ran the comm
 a build will generate it for that context. We would want to save this to file:
 
 ```bash
-./bin/compspec create --in ./examples/lammps-experiment.yaml -a custom.gpu.available=yes -o ./examples/generated-compatibility-spec.json
+./bin/compspec create artifact --in ./examples/lammps-experiment.yaml -a custom.gpu.available=yes -o ./examples/generated-compatibility-spec.json
 ```
 
 And that's it! We would next (likely during CI) push this compatibility artifact to a URI that is likely (TBA) linked to the image.

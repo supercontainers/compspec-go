@@ -54,12 +54,21 @@ func main() {
 	cachePath := matchCmd.String("", "cache", &argparse.Options{Help: "A path to a cache for artifacts"})
 	saveGraph := matchCmd.String("", "cache-graph", &argparse.Options{Help: "Load or use a cached graph"})
 
-	// Create arguments
-	options := createCmd.StringList("a", "append", &argparse.Options{Help: "Append one or more custom metadata fields to append"})
-	specname := createCmd.String("i", "in", &argparse.Options{Required: true, Help: "Input yaml that contains spec for creation"})
-	specfile := createCmd.String("o", "out", &argparse.Options{Help: "Save compatibility json artifact to this file"})
-	mediaType := createCmd.String("m", "media-type", &argparse.Options{Help: "The expected media-type for the compatibility artifact"})
-	allowFailCreate := createCmd.Flag("f", "allow-fail", &argparse.Options{Help: "Allow any specific extractor to fail (and continue extraction)"})
+	// Create subcommands - note that "nodes" could be cluster, but could want to make a subset of one
+	artifactCmd := createCmd.NewCommand("artifact", "Create a new artifact")
+	nodesCmd := createCmd.NewCommand("nodes", "Create nodes in Json Graph format from extraction data")
+
+	// Artifaction creation arguments
+	options := artifactCmd.StringList("a", "append", &argparse.Options{Help: "Append one or more custom metadata fields to append"})
+	specname := artifactCmd.String("i", "in", &argparse.Options{Required: true, Help: "Input yaml that contains spec for creation"})
+	specfile := artifactCmd.String("o", "out", &argparse.Options{Help: "Save compatibility json artifact to this file"})
+	mediaType := artifactCmd.String("m", "media-type", &argparse.Options{Help: "The expected media-type for the compatibility artifact"})
+	allowFailCreate := artifactCmd.Flag("f", "allow-fail", &argparse.Options{Help: "Allow any specific extractor to fail (and continue extraction)"})
+
+	// Nodes creation arguments
+	nodesOutFile := nodesCmd.String("", "nodes-output", &argparse.Options{Help: "Output json file for cluster nodes"})
+	nodesDir := nodesCmd.String("", "node-dir", &argparse.Options{Required: true, Help: "Input directory with extraction data for nodes"})
+	clusterName := nodesCmd.String("", "cluster-name", &argparse.Options{Required: true, Help: "Cluster name to describe in graph"})
 
 	// Now parse the arguments
 	err := parser.Parse(os.Args)
@@ -75,10 +84,21 @@ func main() {
 			log.Fatalf("Issue with extraction: %s\n", err)
 		}
 	} else if createCmd.Happened() {
-		err := create.Run(*specname, *options, *specfile, *allowFailCreate)
-		if err != nil {
-			log.Fatal(err.Error())
+		if artifactCmd.Happened() {
+			err := create.Artifact(*specname, *options, *specfile, *allowFailCreate)
+			if err != nil {
+				log.Fatal(err.Error())
+			}
+		} else if nodesCmd.Happened() {
+			err := create.Nodes(*nodesDir, *clusterName, *nodesOutFile)
+			if err != nil {
+				log.Fatal(err.Error())
+			}
+		} else {
+			fmt.Println(Header)
+			fmt.Println("Please provide a --node-dir and (optionally) --nodes-output (json file to write)")
 		}
+
 	} else if matchCmd.Happened() {
 		err := match.Run(
 			*manifestFile,

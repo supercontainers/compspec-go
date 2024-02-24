@@ -15,6 +15,7 @@ type Extractor interface {
 	Extract(interface{}) (ExtractorData, error)
 	Validate() bool
 	Sections() []string
+	// GetSection(string) ExtractorData
 }
 
 // ExtractorData is returned by an extractor

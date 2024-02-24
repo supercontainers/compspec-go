@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"math"
 	"math/rand"
 	"os"
 	"strings"
@@ -19,6 +20,21 @@ func PathExists(path string) (bool, error) {
 		return true, fmt.Errorf("warning: exists but another error happened (debug): %s", err)
 	}
 	return true, nil
+}
+
+// chunkify a count of processors across sockets
+func Chunkify(items []string, count int) [][]string {
+	var chunks [][]string
+	chunkSize := int(math.Ceil(float64(len(items) / count)))
+
+	for i := 0; i < len(items); i += chunkSize {
+		end := i + chunkSize
+		if end > len(items) {
+			end = len(items)
+		}
+		chunks = append(chunks, items[i:end])
+	}
+	return chunks
 }
 
 // SplitDelimiterList splits a list of items by an additional delimiter

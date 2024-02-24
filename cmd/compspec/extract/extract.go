@@ -5,7 +5,7 @@ import (
 	"os"
 	"runtime"
 
-	p "github.com/compspec/compspec-go/plugins"
+	ep "github.com/compspec/compspec-go/plugins/extractors"
 )
 
 // Run will run an extraction of host metadata
@@ -15,12 +15,12 @@ func Run(filename string, pluginNames []string, allowFail bool) error {
 	// Womp womp, we only support linux! There is no other way.
 	operatingSystem := runtime.GOOS
 	if operatingSystem != "linux" {
-		return fmt.Errorf("🤓️ Sorry, we only support linux.")
+		return fmt.Errorf("🤓️ sorry, we only support linux")
 	}
 
 	// parse [section,...,section] into named plugins and sections
 	// return plugins
-	plugins, err := p.GetPlugins(pluginNames)
+	plugins, err := ep.GetPlugins(pluginNames)
 	if err != nil {
 		return err
 	}
@@ -37,7 +37,7 @@ func Run(filename string, pluginNames []string, allowFail bool) error {
 		// This returns an array of bytes
 		b, err := result.ToJson()
 		if err != nil {
-			return fmt.Errorf("There was an issue marshalling to JSON: %s\n", err)
+			return fmt.Errorf("there was an issue marshalling to JSON: %s", err)
 		}
 		err = os.WriteFile(filename, b, 0644)
 		if err != nil {

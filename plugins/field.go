@@ -21,7 +21,7 @@ func ParseField(field string) (Field, error) {
 
 	// We need at least an extractor name, section, and value
 	if len(parts) < 3 {
-		return f, fmt.Errorf("warning: field %s value needs to have at least <extractor>.<section>.<field>\n", field)
+		return f, fmt.Errorf("warning: field %s value needs to have at least <plugin>.<section>.<field>\n", field)
 
 	}
 	f.Extractor = parts[0]

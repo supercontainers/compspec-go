@@ -3,6 +3,7 @@ package system
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 
 	"github.com/compspec/compspec-go/pkg/extractor"
@@ -111,9 +112,16 @@ func getCpuFeatures(p map[string]string) (string, error) {
 }
 
 // getCPUInformation gets information about the system
-// TODO this is not used.
 func getCPUInformation() (extractor.ExtractorSection, error) {
 	info := extractor.ExtractorSection{}
+
+	// This really needs to be better, the hard part is that
+	// proc/cpuinfo is different between arm and others,
+	// and arm doesn't show physical/virtual cores
+	cores := runtime.NumCPU()
+
+	// This is a guess at best
+	info["cores"] = fmt.Sprintf("%d", cores)
 
 	//stat, err := linuxproc.ReadCPUInfo(CpuInfoFile)
 	//if err != nil {
