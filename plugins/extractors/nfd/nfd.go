@@ -69,12 +69,9 @@ func (e NFDExtractor) Description() string {
 	return ExtractorDescription
 }
 
-func (e NFDExtractor) Create(options map[string]string) error {
-	return nil
-}
-
-func (e NFDExtractor) IsCreator() bool   { return false }
-func (e NFDExtractor) IsExtractor() bool { return true }
+func (e NFDExtractor) Create(plugin.PluginOptions) error { return nil }
+func (e NFDExtractor) IsCreator() bool                   { return false }
+func (e NFDExtractor) IsExtractor() bool                 { return true }
 
 // Validate ensures that the sections provided are in the list we know
 func (e NFDExtractor) Validate() bool {

@@ -3,6 +3,7 @@ package plugins
 import (
 	"fmt"
 
+	"github.com/compspec/compspec-go/pkg/plugin"
 	pg "github.com/compspec/compspec-go/pkg/plugin"
 )
 
@@ -54,7 +55,8 @@ func (r *PluginsRequest) Create() (pg.Result, error) {
 		if !p.Plugin.IsCreator() {
 			continue
 		}
-		err := p.Plugin.Create(nil)
+		options := plugin.PluginOptions{}
+		err := p.Plugin.Create(options)
 		if err != nil {
 			return result, err
 		}

@@ -38,12 +38,12 @@ func (c ClusterCreator) IsCreator() bool   { return true }
 func (c ClusterCreator) IsExtractor() bool { return false }
 
 // Create generates the desired output
-func (c ClusterCreator) Create(options map[string]string) error {
+func (c ClusterCreator) Create(options plugin.PluginOptions) error {
 
 	// unwrap options (we can be sure they are at least provided)
-	nodesDir := options["nodes-dir"]
-	clusterName := options["cluster-name"]
-	nodeOutFile := options["node-outfile"]
+	nodesDir := options.StrOpts["nodes-dir"]
+	clusterName := options.StrOpts["cluster-name"]
+	nodeOutFile := options.StrOpts["node-outfile"]
 
 	// Read in each node into a plugins.Result
 	// 	Results map[string]plugin.PluginData `json:"extractors,omitempty"`
@@ -92,7 +92,8 @@ func (c ClusterCreator) Create(options map[string]string) error {
 	// size (usually 1)
 	// exclusive (usually false)
 	// unit (usually empty or an amount)
-	rack := *g.AddNode("rack", "rack", 1, false, "")
+	// path (root and current resource path are added, so empty here)
+	rack := *g.AddNode("rack", "rack", 1, false, "", "")
 
 	// Connect the rack to the parent, both ways.
 	// I think this is because fluxion is Depth First and Upwards (dfu)
@@ -145,7 +146,8 @@ func (c ClusterCreator) Create(options map[string]string) error {
 		}
 
 		// First add the rack -> node
-		node := *g.AddNode("node", "node", 1, false, "")
+		// We only have one rack here, so hard coded id for now
+		node := *g.AddNode("node", "node", 1, false, "", "rack0")
 		g.AddEdge(rack, node, "contains")
 		g.AddEdge(node, rack, "in")
 
@@ -171,7 +173,7 @@ func (c ClusterCreator) Create(options map[string]string) error {
 		// TODO we should also get this in better detail, physical vs logical cores
 		items := []string{}
 		for i := 0; i < cpuCount; i++ {
-			items = append(items, fmt.Sprintf("%s", i))
+			items = append(items, fmt.Sprintf("%d", i))
 		}
 		// Mapping of socket to cores
 		chunks := utils.Chunkify(items, socketCount)
@@ -179,13 +181,15 @@ func (c ClusterCreator) Create(options map[string]string) error {
 
 			// Create each socket attached to the node
 			// rack -> node -> socket
-			socketNode := *g.AddNode("socket", "socket", 1, false, "")
+			path := fmt.Sprintf("rack0/node%s", *node.Label)
+			socketNode := *g.AddNode("socket", "socket", 1, false, "", path)
 			g.AddEdge(node, socketNode, "contains")
 			g.AddEdge(socketNode, node, "in")
 
 			// Create each core attached to the socket
 			for _, _ = range chunk {
-				coreNode := *g.AddNode("core", "core", 1, false, "")
+				path := fmt.Sprintf("rack0/node%s/socket%s", *node.Label, *socketNode.Label)
+				coreNode := *g.AddNode("core", "core", 1, false, "", path)
 				g.AddEdge(socketNode, coreNode, "contains")
 				g.AddEdge(coreNode, socketNode, "in")
 

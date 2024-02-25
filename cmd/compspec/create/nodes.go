@@ -1,6 +1,7 @@
 package create
 
 import (
+	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/plugins/creators/cluster"
 )
 
@@ -14,10 +15,12 @@ func Nodes(nodesDir, clusterName, nodeOutFile string) error {
 	if err != nil {
 		return err
 	}
-	options := map[string]string{
-		"nodes-dir":    nodesDir,
-		"cluster-name": clusterName,
-		"node-outfile": nodeOutFile,
+	options := plugin.PluginOptions{
+		StrOpts: map[string]string{
+			"nodes-dir":    nodesDir,
+			"cluster-name": clusterName,
+			"node-outfile": nodeOutFile,
+		},
 	}
 	return creator.Create(options)
 }
