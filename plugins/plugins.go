@@ -7,15 +7,30 @@ import (
 	"github.com/compspec/compspec-go/plugins/extractors/library"
 	"github.com/compspec/compspec-go/plugins/extractors/nfd"
 	"github.com/compspec/compspec-go/plugins/extractors/system"
+
+	"github.com/compspec/compspec-go/plugins/creators/cluster"
 )
 
 // Add new plugin names here. They should correspond with the package name, then NewPlugin()
 var (
+	// Explicitly extractors
 	KernelExtractor  = "kernel"
 	SystemExtractor  = "system"
 	LibraryExtractor = "library"
 	NFDExtractor     = "nfd"
-	pluginNames      = []string{KernelExtractor, SystemExtractor, LibraryExtractor, NFDExtractor}
+
+	// Explicitly creators
+	ClusterCreator  = "cluster"
+	ArtifactCreator = "artifact"
+
+	pluginNames = []string{
+		ArtifactCreator,
+		ClusterCreator,
+		KernelExtractor,
+		SystemExtractor,
+		LibraryExtractor,
+		NFDExtractor,
+	}
 )
 
 // parseSections will return sections from the name string
@@ -40,7 +55,7 @@ func parseSections(raw string) (string, []string) {
 	return name, sections
 }
 
-// Get plugins parses a request and returns a list of plugins
+// Get plugins parses a request and returns a list of extractor plugins
 // We honor the order that the plugins and sections are provided in
 func GetPlugins(names []string) (PluginsRequest, error) {
 
@@ -63,7 +78,27 @@ func GetPlugins(names []string) (PluginsRequest, error) {
 				return request, err
 			}
 			// Save the name, the instantiated interface, and sections
-			pr := PluginRequest{Name: name, Extractor: p, Sections: sections}
+			pr := PluginRequest{Name: name, Plugin: p, Sections: sections}
+			request = append(request, pr)
+		}
+
+		// Cluster and artifact creators
+		if strings.HasPrefix(name, ClusterCreator) {
+			p, err := cluster.NewPlugin()
+			if err != nil {
+				return request, err
+			}
+			// Save the name, the instantiated interface, and sections
+			pr := PluginRequest{Name: name, Plugin: p}
+			request = append(request, pr)
+		}
+		if strings.HasPrefix(name, ArtifactCreator) {
+			p, err := cluster.NewPlugin()
+			if err != nil {
+				return request, err
+			}
+			// Save the name, the instantiated interface, and sections
+			pr := PluginRequest{Name: name, Plugin: p}
 			request = append(request, pr)
 		}
 
@@ -73,7 +108,7 @@ func GetPlugins(names []string) (PluginsRequest, error) {
 				return request, err
 			}
 			// Save the name, the instantiated interface, and sections
-			pr := PluginRequest{Name: name, Extractor: p, Sections: sections}
+			pr := PluginRequest{Name: name, Plugin: p, Sections: sections}
 			request = append(request, pr)
 		}
 
@@ -83,7 +118,7 @@ func GetPlugins(names []string) (PluginsRequest, error) {
 				return request, err
 			}
 			// Save the name, the instantiated interface, and sections
-			pr := PluginRequest{Name: name, Extractor: p, Sections: sections}
+			pr := PluginRequest{Name: name, Plugin: p, Sections: sections}
 			request = append(request, pr)
 		}
 
@@ -93,7 +128,7 @@ func GetPlugins(names []string) (PluginsRequest, error) {
 				return request, err
 			}
 			// Save the name, the instantiated interface, and sections
-			pr := PluginRequest{Name: name, Extractor: p, Sections: sections}
+			pr := PluginRequest{Name: name, Plugin: p, Sections: sections}
 			request = append(request, pr)
 		}
 	}

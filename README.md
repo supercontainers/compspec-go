@@ -11,6 +11,8 @@ This is a prototype compatibility checking tool. Right now our aim is to use in 
 
  - I'm starting with just Linux. I know there are those "other" platforms, but if it doesn't run on HPC or Kubernetes easily I'm not super interested (ahem, Mac and Windows)!
  - not all extractors work in containers (e.g., kernel needs to be on the host)
+ - The node feature discovery source doesn't provide mapping of socket -> cores, nor does it give details about logical vs. physical CPU.
+  - We will likely want to add hwloc go bindings, but there is a bug currently. 
 
 Note that for development we are using nfd-source that does not require kubernetes:
 

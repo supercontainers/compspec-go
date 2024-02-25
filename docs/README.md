@@ -2,9 +2,9 @@
 
 This is early documentation that will be converted eventually to something prettier. Read more about:
 
- - [Design](design.md)
- - [Usage](usage.md)
-
+ - [Design](design.md) of compspec
+ - [Usage](usage.md) generic use cases
+ - [Rainbow](rainbow.md) use cases and examples for the rainbow scheduler
 
 ## Thanks and Previous Art
 

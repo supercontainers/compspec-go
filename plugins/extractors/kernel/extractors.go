@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/pkg/utils"
 	kernelParser "github.com/moby/moby/pkg/parsers/kernel"
 )
@@ -24,7 +24,7 @@ const (
 )
 
 // getKernelBootParams loads parameters given to the kernel at boot time
-func getKernelBootParams() (extractor.ExtractorSection, error) {
+func getKernelBootParams() (plugin.PluginSection, error) {
 
 	raw, err := os.ReadFile(kernelBootFile)
 	if err != nil {
@@ -36,7 +36,7 @@ func getKernelBootParams() (extractor.ExtractorSection, error) {
 }
 
 // getKernelBootConfig loads key value pairs from the kernel config
-func getKernelBootConfig() (extractor.ExtractorSection, error) {
+func getKernelBootConfig() (plugin.PluginSection, error) {
 
 	version, err := kernelParser.GetKernelVersion()
 	if err != nil {
@@ -50,7 +50,7 @@ func getKernelBootConfig() (extractor.ExtractorSection, error) {
 
 // getKernelModules flattens the list of kernel modules (drivers) into
 // the name (and if enabled) and version. I don't know if we need more than that.
-func getKernelModules() (extractor.ExtractorSection, error) {
+func getKernelModules() (plugin.PluginSection, error) {
 	version, err := kernelParser.GetKernelVersion()
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func getKernelModules() (extractor.ExtractorSection, error) {
 	// module.<name> = <version>
 	// module.parameter.<param> = value
 	// TODO will this work?
-	modules := extractor.ExtractorSection{}
+	modules := plugin.PluginSection{}
 	for _, moduleDir := range moduleDirs {
 
 		// Don't look unless it's a directory

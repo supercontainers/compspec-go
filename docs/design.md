@@ -7,18 +7,28 @@ The compatibility tool is responsible for extracting information about a system,
 
 ## Definitions
 
-### Extractor
+### Plugin
 
-An **extractor** is a core plugin that knows how to retrieve metadata about a host. An extractor is usually going to be run for two cases:
+A plugin can define one or more functionalities;
+
+- "Extract" is expected to know how to extract metadata about an application or environment
+- "Create" is expected to create something from extracted data
+
+This means that an **extractor** is a core plugin that knows how to retrieve metadata about a host. An extractor is usually going to be run for two cases:
 
 1. During CI to extract (and save) metadata about a particular build to put in a compatibility artifact.
 2. During image selection to extract information about the host to compare to.
 
-Examples extractors could be "library" or "system."
+Examples extractors could be "library" or "system." You interact with extractor plugins via the "extract" command.
 
-### Section
+A **creator** is a plugin that is responsible for creating an artifact that includes some extracted metadata. The creator is agnostic to what it it being asked to generate in the sense that it just needs a mapping. The mapping will be from the extractor namespace to the compatibility artifact namespace. For our first prototype, this just means asking for particular extractor attributes to map to a set of annotations that we want to dump into json. To start there should only be one creator plugin needed, however if there are different structures of artifacts needed, I could imagine more. An example creation specification for a prototype experiment where we care about architecture, MPI, and GPU is provided in [examples](examples).
 
-A **section** is a group of metadata within an extractor. For example, within "library" a section is for "mpi." This allows a user to specify running the `--name library[mpi]` extractor to ask for the mpi section of the library family. Another example is under kernel.
+Plugins can be one or the other, or both.
+
+#### Section
+
+A **section** is a group of metadata typically within an extractor, and could also be defined for creators when we have more use cases. 
+For example, within "library" a section is for "mpi." This allows a user to specify running the `--name library[mpi]` extractor to ask for the mpi section of the library family. Another example is under kernel.
 The user might want to ask for more than one group to be extracted and might ask for `--name kernel[boot,config]`. Section basically provides more granularity to an extractor namespace. For the above two examples, the metadata generated would be organized like:
 
 ```
@@ -31,11 +41,9 @@ kernel
 
 For the above, right now I am implementing extractors generally, or "wild-westy" in the sense that the namespace is oriented toward the extractor name and sections it owns (e.g., no community namespaces like archspec, spack, opencontainers, etc). This is subject to change depending on the design the working group decides on.
 
-### Creator
-
-A creator is a plugin that is responsible for creating an artifact that includes some extracted metadata. The creator is agnostic to what it it being asked to generate in the sense that it just needs a mapping. The mapping will be from the extractor namespace to the compatibility artifact namespace. For our first prototype, this just means asking for particular extractor attributes to map to a set of annotations that we want to dump into json. To start there should only be one creator plugin needed, however if there are different structures of artifacts needed, I could imagine more. An example creation specification for a prototype experiment where we care about architecture, MPI, and GPU is provided in [examples](examples).
-
 ## Overview
+
+> This was the original proposal and may be out of date.
 
 The design is based on the prototype from that pull request, shown below.
 

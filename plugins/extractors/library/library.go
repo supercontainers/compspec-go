@@ -3,7 +3,7 @@ package library
 import (
 	"fmt"
 
-	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/pkg/utils"
 )
 
@@ -33,6 +33,13 @@ func (e LibraryExtractor) Description() string {
 	return ExtractorDescription
 }
 
+func (e LibraryExtractor) Create(options map[string]string) error {
+	return nil
+}
+
+func (e LibraryExtractor) IsCreator() bool   { return false }
+func (e LibraryExtractor) IsExtractor() bool { return true }
+
 // Validate ensures that the sections provided are in the list we know
 func (e LibraryExtractor) Validate() bool {
 	invalids, valid := utils.StringArrayIsSubset(e.sections, validSections)
@@ -43,10 +50,10 @@ func (e LibraryExtractor) Validate() bool {
 }
 
 // Extract returns library metadata, for a set of named sections
-func (e LibraryExtractor) Extract(interface{}) (extractor.ExtractorData, error) {
+func (e LibraryExtractor) Extract(interface{}) (plugin.PluginData, error) {
 
-	sections := map[string]extractor.ExtractorSection{}
-	data := extractor.ExtractorData{}
+	sections := map[string]plugin.PluginSection{}
+	data := plugin.PluginData{}
 
 	// Only extract the sections we asked for
 	for _, name := range e.sections {
@@ -63,13 +70,13 @@ func (e LibraryExtractor) Extract(interface{}) (extractor.ExtractorData, error) 
 }
 
 // NewPlugin validates and returns a new plugin
-func NewPlugin(sections []string) (extractor.Extractor, error) {
+func NewPlugin(sections []string) (plugin.PluginInterface, error) {
 	if len(sections) == 0 {
 		sections = validSections
 	}
 	e := LibraryExtractor{sections: sections}
 	if !e.Validate() {
-		return nil, fmt.Errorf("plugin %s is not valid\n", e.Name())
+		return nil, fmt.Errorf("plugin %s is not valid", e.Name())
 	}
 	return e, nil
 }

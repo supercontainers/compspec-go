@@ -1,35 +1,61 @@
-package create
+package artifact
 
 import (
 	"fmt"
 	"os"
+	"strings"
 
+	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/pkg/types"
 	p "github.com/compspec/compspec-go/plugins"
 	"sigs.k8s.io/yaml"
 )
 
-// loadRequest loads a Compatibility Request YAML into a struct
-func loadRequest(filename string) (*types.CompatibilityRequest, error) {
-	request := types.CompatibilityRequest{}
-	yamlFile, err := os.ReadFile(filename)
-	if err != nil {
-		return &request, err
-	}
+const (
+	CreatorName        = "artifact"
+	CreatorDescription = "describe an application or environment"
+)
 
-	err = yaml.Unmarshal(yamlFile, &request)
-	if err != nil {
-		return &request, err
-	}
-	return &request, nil
+type ArtifactCreator struct{}
+
+func (c ArtifactCreator) Description() string {
+	return CreatorDescription
 }
 
-// Run will create a compatibility artifact based on a request in YAML
-func Run(specname string, fields []string, saveto string, allowFail bool) error {
+func (c ArtifactCreator) Name() string {
+	return CreatorName
+}
+
+func (c ArtifactCreator) Sections() []string {
+	return []string{}
+}
+
+func (c ArtifactCreator) Extract(interface{}) (plugin.PluginData, error) {
+	return plugin.PluginData{}, nil
+}
+func (c ArtifactCreator) IsCreator() bool   { return true }
+func (c ArtifactCreator) IsExtractor() bool { return false }
+
+// Create generates the desired output
+func (c ArtifactCreator) Create(options map[string]string) error {
+
+	// unwrap options (we can be sure they are at least provided)
+	specname := options["specname"]
+	saveto := options["saveto"]
+	fieldsCombined := options["fields"]
+	fields := strings.Split(fieldsCombined, "||")
+
+	// This is uber janky. We could use interfaces
+	// But I just feel so lazy right now
+	allowFailFlag := options["allowFail"]
+	allowFail := false
+	if allowFailFlag == "true" {
+		allowFail = true
+	}
 
 	// Cut out early if a spec not provided
 	if specname == "" {
-		return fmt.Errorf("A spec input -i/--input is required")
+		return fmt.Errorf("a spec input -i/--input is required")
 	}
 	request, err := loadRequest(specname)
 	if err != nil {
@@ -74,9 +100,24 @@ func Run(specname string, fields []string, saveto string, allowFail bool) error 
 	return nil
 }
 
+// loadRequest loads a Compatibility Request YAML into a struct
+func loadRequest(filename string) (*types.CompatibilityRequest, error) {
+	request := types.CompatibilityRequest{}
+	yamlFile, err := os.ReadFile(filename)
+	if err != nil {
+		return &request, err
+	}
+
+	err = yaml.Unmarshal(yamlFile, &request)
+	if err != nil {
+		return &request, err
+	}
+	return &request, nil
+}
+
 // LoadExtractors loads a compatibility result into a compatibility request
 // After this we can save the populated thing into an artifact (json DUMP)
-func PopulateExtractors(result *p.Result, request *types.CompatibilityRequest) (*types.CompatibilityRequest, error) {
+func PopulateExtractors(result *plugin.Result, request *types.CompatibilityRequest) (*types.CompatibilityRequest, error) {
 
 	// Every metadata attribute must be known under a schema
 	schemas := request.Metadata.Schemas
@@ -97,7 +138,7 @@ func PopulateExtractors(result *p.Result, request *types.CompatibilityRequest) (
 		for key, extractorKey := range compat.Attributes {
 
 			// Get the extractor, section, and subfield from the extractor lookup key
-			f, err := p.ParseField(extractorKey)
+			f, err := plugin.ParseField(extractorKey)
 			if err != nil {
 				fmt.Printf("warning: cannot parse %s: %s, setting to empty\n", key, extractorKey)
 				compat.Attributes[key] = ""
@@ -137,4 +178,14 @@ func PopulateExtractors(result *p.Result, request *types.CompatibilityRequest) (
 	}
 
 	return request, nil
+}
+
+func (c ArtifactCreator) Validate() bool {
+	return true
+}
+
+// NewPlugin creates a new ArtifactCreator
+func NewPlugin() (plugin.PluginInterface, error) {
+	c := ArtifactCreator{}
+	return c, nil
 }

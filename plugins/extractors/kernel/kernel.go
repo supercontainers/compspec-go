@@ -3,7 +3,7 @@ package kernel
 import (
 	"fmt"
 
-	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/pkg/utils"
 )
 
@@ -27,6 +27,12 @@ func (e KernelExtractor) Description() string {
 	return ExtractorDescription
 }
 
+func (e KernelExtractor) Create(options map[string]string) error {
+	return nil
+}
+func (e KernelExtractor) IsCreator() bool   { return false }
+func (e KernelExtractor) IsExtractor() bool { return true }
+
 func (e KernelExtractor) Sections() []string {
 	return e.sections
 }
@@ -48,10 +54,10 @@ func (c KernelExtractor) Validate() bool {
 
 // Extract returns kernel metadata, for a set of named sections
 // TODO eventually the user could select which sections they want
-func (c KernelExtractor) Extract(interface{}) (extractor.ExtractorData, error) {
+func (c KernelExtractor) Extract(interface{}) (plugin.PluginData, error) {
 
-	sections := map[string]extractor.ExtractorSection{}
-	data := extractor.ExtractorData{}
+	sections := map[string]plugin.PluginSection{}
+	data := plugin.PluginData{}
 
 	// Only extract the sections we asked for
 	for _, name := range c.sections {
@@ -87,14 +93,14 @@ func (c KernelExtractor) Extract(interface{}) (extractor.ExtractorData, error) {
 	return data, nil
 }
 
-// NewPlugin validates and returns a new kernel plugin
-func NewPlugin(sections []string) (extractor.Extractor, error) {
+// NewPlugin validates and returns a new kernel plugins
+func NewPlugin(sections []string) (plugin.PluginInterface, error) {
 	if len(sections) == 0 {
 		sections = validSections
 	}
 	e := KernelExtractor{sections: sections}
 	if !e.Validate() {
-		return nil, fmt.Errorf("plugin %s is not valid\n", e.Name())
+		return nil, fmt.Errorf("plugin %s is not valid", e.Name())
 	}
 	return e, nil
 }

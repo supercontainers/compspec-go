@@ -3,9 +3,10 @@ package system
 import (
 	"fmt"
 	"os"
+	"runtime"
 	"strings"
 
-	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/pkg/utils"
 )
 
@@ -112,8 +113,13 @@ func getCpuFeatures(p map[string]string) (string, error) {
 
 // getCPUInformation gets information about the system
 // TODO this is not used.
-func getCPUInformation() (extractor.ExtractorSection, error) {
-	info := extractor.ExtractorSection{}
+func getCPUInformation() (plugin.PluginSection, error) {
+	info := plugin.PluginSection{}
+
+	cores := runtime.NumCPU()
+
+	// This is a guess at best
+	info["cores"] = fmt.Sprintf("%d", cores)
 
 	//stat, err := linuxproc.ReadCPUInfo(CpuInfoFile)
 	//if err != nil {
@@ -129,8 +135,8 @@ func getCPUInformation() (extractor.ExtractorSection, error) {
 }
 
 // getProcessorInformation returns details about each processor
-func getProcessorInformation() (extractor.ExtractorSection, error) {
-	info := extractor.ExtractorSection{}
+func getProcessorInformation() (plugin.PluginSection, error) {
+	info := plugin.PluginSection{}
 
 	raw, err := os.ReadFile(CpuInfoFile)
 	if err != nil {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/pkg/utils"
 )
 
@@ -35,8 +35,8 @@ func getOsArch() (string, error) {
 }
 
 // getArchInformation gets architecture information
-func getArchInformation() (extractor.ExtractorSection, error) {
-	info := extractor.ExtractorSection{}
+func getArchInformation() (plugin.PluginSection, error) {
+	info := plugin.PluginSection{}
 
 	// Read in architectures
 	arch, err := getOsArch()

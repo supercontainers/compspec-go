@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/plugin"
 )
 
 const (
@@ -12,8 +12,8 @@ const (
 )
 
 // getMemoryInformation parses /proc/meminfo to get node memory metadata
-func getMemoryInformation() (extractor.ExtractorSection, error) {
-	info := extractor.ExtractorSection{}
+func getMemoryInformation() (plugin.PluginSection, error) {
+	info := plugin.PluginSection{}
 
 	raw, err := os.ReadFile(memoryInfoFile)
 	if err != nil {
