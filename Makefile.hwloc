@@ -1,0 +1,35 @@
+# This makefile will be used when we can add hwloc - there is currently a bug.
+HERE ?= $(shell pwd)
+LOCALBIN ?= $(shell pwd)/bin
+
+# Install hwloc here for use to compile, etc.
+LOCALLIB ?= $(shell pwd)/lib
+HWLOC_INCLUDE ?= $(LOCALLIB)/include/hwloc.h
+BUILDENVVAR=CGO_CFLAGS="-I$(LOCALLIB)/include" CGO_LDFLAGS="-L$(LOCALLIB)/lib -lhwloc"
+
+.PHONY: all
+
+all: build
+
+.PHONY: $(LOCALBIN)
+$(LOCALBIN):
+	mkdir -p $(LOCALBIN)
+
+.PHONY: $(LOCALLIB)
+$(LOCALLIB):
+	mkdir -p $(LOCALLIB)
+
+$(HWLOC_INCLUDE):
+	git clone --depth 1 https://github.com/open-mpi/hwloc /tmp/hwloc || true && \
+	  cd /tmp/hwloc && ./autogen.sh && \
+	  ./configure --enable-static --disable-shared LDFLAGS="-static" --prefix=$(LOCALLIB)/ && \
+  	  make LDFLAGS=-all-static && make install
+	
+build: $(LOCALBIN) $(HWLOC_INCLUDE)
+	GO111MODULE="on" $(BUILDENVVAR) go build -ldflags '-w' -o $(LOCALBIN)/compspec cmd/compspec/compspec.go
+
+build-arm: $(LOCALBIN) $(HWLOC_INCLUDE)
+	GO111MODULE="on" $(BUILDENVVAR) GOARCH=arm64 go build -ldflags '-w' -o $(LOCALBIN)/compspec-arm cmd/compspec/compspec.go
+
+build-ppc: $(LOCALBIN) $(HWLOC_INCLUDE)
+	GO111MODULE="on" $(BUILDENVVAR) GOARCH=ppc64le go build -ldflags '-w' -o $(LOCALBIN)/compspec-ppc cmd/compspec/compspec.go

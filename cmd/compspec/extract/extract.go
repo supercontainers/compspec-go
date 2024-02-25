@@ -5,7 +5,7 @@ import (
 	"os"
 	"runtime"
 
-	ep "github.com/compspec/compspec-go/plugins/extractors"
+	p "github.com/compspec/compspec-go/plugins"
 )
 
 // Run will run an extraction of host metadata
@@ -20,7 +20,7 @@ func Run(filename string, pluginNames []string, allowFail bool) error {
 
 	// parse [section,...,section] into named plugins and sections
 	// return plugins
-	plugins, err := ep.GetPlugins(pluginNames)
+	plugins, err := p.GetPlugins(pluginNames)
 	if err != nil {
 		return err
 	}

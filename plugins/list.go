@@ -6,8 +6,20 @@ import (
 	"github.com/jedib0t/go-pretty/v6/table"
 )
 
+// getPluginType returns a string to describe the plugin type
+func getPluginType(p PluginRequest) string {
+
+	if p.Plugin.IsCreator() && p.Plugin.IsExtractor() {
+		return "extractor and creator"
+	}
+	if p.Plugin.IsExtractor() {
+		return "extractor"
+	}
+	return "creator"
+}
+
 // List plugins available, print in a pretty table!
-func List(ps []PluginInformation) error {
+func (r *PluginsRequest) List() error {
 
 	// Write out table with nodes
 	t := table.NewWriter()
@@ -16,30 +28,59 @@ func List(ps []PluginInformation) error {
 	t.AppendHeader(table.Row{"", "Type", "Name", "Section"})
 	t.AppendSeparator()
 
-	// keep count of plugins (just extractors for now)
+	// keep count of plugins, total, and for each kind
 	count := 0
-	pluginCount := 0
+	extractorCount := 0
+	creatorCount := 0
 
-	// This will iterate across plugin types (e.g., extraction and converter)
-	for _, p := range ps {
-		pluginCount += 1
+	// Do creators first in one section (only a few)
+	t.AppendSeparator()
+	t.AppendRow(table.Row{"creation plugins", "", "", ""})
 
-		// This iterates across plugins in the family
-		for i, section := range p.GetSections() {
+	// TODO add description column
+	for _, p := range *r {
 
-			// Add the extractor plugin description only for first in the list
-			if i == 0 {
-				t.AppendSeparator()
-				t.AppendRow(table.Row{p.GetDescription(), "", "", ""})
-			}
+		if !p.Plugin.IsCreator() {
+			continue
+		}
+		pluginType := getPluginType(p)
 
-			count += 1
-			t.AppendRow([]interface{}{"", p.GetType(), section.Name})
+		// Creators don't have sections necessarily
+		creatorCount += 1
+		count += 1
+
+		// Allow plugins to serve dual purposes
+		// TODO what should sections be used for?
+		t.AppendRow([]interface{}{"", pluginType, p.Name, ""})
+	}
+
+	// TODO add description column
+	for _, p := range *r {
+
+		if p.Plugin.IsExtractor() {
+			extractorCount += 1
 		}
 
+		newPlugin := true
+		pluginType := getPluginType(p)
+
+		// Extractors are parsed by sections
+		for _, section := range p.Plugin.Sections() {
+
+			// Add the extractor plugin description only for first in the list
+			if newPlugin {
+				t.AppendSeparator()
+				t.AppendRow(table.Row{p.Plugin.Description(), "", "", ""})
+				newPlugin = false
+			}
+			count += 1
+
+			// Allow plugins to serve dual purposes
+			t.AppendRow([]interface{}{"", pluginType, p.Name, section})
+		}
 	}
 	t.AppendSeparator()
-	t.AppendFooter(table.Row{"Total", "", pluginCount, count})
+	t.AppendFooter(table.Row{"Total", "", extractorCount + creatorCount, count})
 	t.SetStyle(table.StyleColoredCyanWhiteOnBlack)
 	t.Render()
 	return nil

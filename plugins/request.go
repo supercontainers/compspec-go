@@ -1,19 +1,64 @@
 package plugins
 
-// A Plugin(s)Information interface is an easy way to combine plugins across spaces
-// primarily to expose metadata, etc.
-type PluginsInformation interface {
-	GetPlugins() []PluginInformation
+import (
+	"fmt"
+
+	pg "github.com/compspec/compspec-go/pkg/plugin"
+)
+
+// A plugin request has a Name and sections
+type PluginRequest struct {
+	Name     string
+	Sections []string
+	Plugin   pg.PluginInterface
 }
 
-type PluginInformation interface {
-	GetName() string
-	GetType() string
-	GetSections() []PluginSection
-	GetDescription() string
+type PluginsRequest []PluginRequest
+
+// Do the extraction for a plugin request, meaning across a set of plugins
+func (r *PluginsRequest) Extract(allowFail bool) (pg.Result, error) {
+
+	// Prepare Result
+	result := pg.Result{}
+	results := map[string]pg.PluginData{}
+
+	for _, p := range *r {
+
+		// Skip plugins that don't define extraction
+		if !p.Plugin.IsExtractor() {
+			continue
+		}
+		r, err := p.Plugin.Extract(p.Sections)
+
+		// We can allow failure
+		if err != nil && !allowFail {
+			return result, fmt.Errorf("there was an extraction error for %s: %s", p.Name, err)
+		} else if err != nil && allowFail {
+			fmt.Printf("Allowing failure - ignoring extraction error for %s: %s\n", p.Name, err)
+		}
+		results[p.Name] = r
+	}
+	result.Results = results
+	return result, nil
 }
 
-type PluginSection struct {
-	Description string
-	Name        string
+// Do creation
+func (r *PluginsRequest) Create() (pg.Result, error) {
+
+	// Prepare Result
+	result := pg.Result{}
+
+	for _, p := range *r {
+
+		// Skip plugins that don't define extraction
+		if !p.Plugin.IsCreator() {
+			continue
+		}
+		err := p.Plugin.Create(nil)
+		if err != nil {
+			return result, err
+		}
+
+	}
+	return result, nil
 }

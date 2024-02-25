@@ -3,7 +3,7 @@ package system
 import (
 	"fmt"
 
-	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/pkg/utils"
 )
 
@@ -39,6 +39,13 @@ func (e SystemExtractor) Sections() []string {
 	return e.sections
 }
 
+func (e SystemExtractor) Create(options map[string]string) error {
+	return nil
+}
+
+func (e SystemExtractor) IsCreator() bool   { return false }
+func (e SystemExtractor) IsExtractor() bool { return true }
+
 // Validate ensures that the sections provided are in the list we know
 func (e SystemExtractor) Validate() bool {
 	invalids, valid := utils.StringArrayIsSubset(e.sections, validSections)
@@ -49,10 +56,10 @@ func (e SystemExtractor) Validate() bool {
 }
 
 // Extract returns system metadata, for a set of named sections
-func (e SystemExtractor) Extract(interface{}) (extractor.ExtractorData, error) {
+func (e SystemExtractor) Extract(interface{}) (plugin.PluginData, error) {
 
-	sections := map[string]extractor.ExtractorSection{}
-	data := extractor.ExtractorData{}
+	sections := map[string]plugin.PluginSection{}
+	data := plugin.PluginData{}
 
 	// Only extract the sections we asked for
 	for _, name := range e.sections {
@@ -70,6 +77,7 @@ func (e SystemExtractor) Extract(interface{}) (extractor.ExtractorData, error) {
 			}
 			sections[OsSection] = section
 		}
+
 		if name == CPUSection {
 			section, err := getCPUInformation()
 			if err != nil {
@@ -99,7 +107,7 @@ func (e SystemExtractor) Extract(interface{}) (extractor.ExtractorData, error) {
 }
 
 // NewPlugin validates and returns a new kernel plugin
-func NewPlugin(sections []string) (extractor.Extractor, error) {
+func NewPlugin(sections []string) (plugin.PluginInterface, error) {
 	if len(sections) == 0 {
 		sections = validSections
 	}

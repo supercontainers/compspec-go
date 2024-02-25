@@ -6,7 +6,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/pkg/utils"
 )
 
@@ -20,8 +20,8 @@ var (
 
 // getMPIInformation returns info on mpi versions and variant
 // yes, fairly janky, please improve upon! This is for a prototype
-func getMPIInformation() (extractor.ExtractorSection, error) {
-	info := extractor.ExtractorSection{}
+func getMPIInformation() (plugin.PluginSection, error) {
+	info := plugin.PluginSection{}
 
 	// Do we even have mpirun?
 	path, err := exec.LookPath(MPIRunExec)

@@ -1,18 +1,15 @@
-package extractors
+package plugin
 
 import (
 	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
-
-	"github.com/compspec/compspec-go/pkg/extractor"
-	"github.com/compspec/compspec-go/plugins"
 )
 
 // A Result wraps named extractor data, just for easy dumping to json
 type Result struct {
-	Results map[string]extractor.ExtractorData `json:"extractors,omitempty"`
+	Results map[string]PluginData `json:"results,omitempty"`
 }
 
 // Load a filename into the result object!
@@ -66,7 +63,7 @@ func (r *Result) AddCustomFields(fields []string) {
 		value := strings.Join(parts[1:], "=")
 
 		// Get the extractor, section, and subfield from the field
-		f, err := plugins.ParseField(field)
+		f, err := ParseField(field)
 		if err != nil {
 			fmt.Printf(err.Error(), field)
 			continue
@@ -75,15 +72,15 @@ func (r *Result) AddCustomFields(fields []string) {
 		// Is the extractor name in the result?
 		_, ok := r.Results[f.Extractor]
 		if !ok {
-			sections := extractor.Sections{}
-			r.Results[f.Extractor] = extractor.ExtractorData{Sections: sections}
+			sections := Sections{}
+			r.Results[f.Extractor] = PluginData{Sections: sections}
 		}
 		data := r.Results[f.Extractor]
 
 		// Is the section name in the extractor data?
 		_, ok = data.Sections[f.Section]
 		if !ok {
-			data.Sections[f.Section] = extractor.ExtractorSection{}
+			data.Sections[f.Section] = PluginSection{}
 		}
 		section := data.Sections[f.Section]
 		section[f.Field] = value

@@ -134,25 +134,6 @@ func (c *ClusterGraph) getNode(
 	return &node
 }
 
-/*
-{
-	"id": "1",
-	"metadata": {
-	  "type": "rack",
-	  "basename": "rack",
-	  "name": "rack0",
-	  "id": 0,
-	  "uniq_id": 1,
-	  "rank": -1,
-	  "exclusive": false,
-	  "unit": "",
-	  "size": 1,
-	  "paths": {
-		"containment": "/tiny0/rack0"
-	  }
-	}
-  },*/
-
 // Init a new FlexGraph from a graphml filename
 // The cluster root is slightly different so we don't use getNode here
 func NewClusterGraph(name string) (ClusterGraph, error) {
@@ -160,10 +141,13 @@ func NewClusterGraph(name string) (ClusterGraph, error) {
 	// prepare a graph to load targets into
 	g := jgf.NewGraph()
 
+	clusterName := fmt.Sprintf("%s0", name)
+
 	// New Metadata with expected fluxion data
 	m := metadata.Metadata{}
 	m.AddElement("type", "cluster")
 	m.AddElement("basename", name)
+	m.AddElement("name", clusterName)
 	m.AddElement("id", 0)
 	m.AddElement("uniq_id", 0)
 	m.AddElement("rank", -1)

@@ -6,7 +6,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/pkg/utils"
 )
 
@@ -112,12 +112,10 @@ func getCpuFeatures(p map[string]string) (string, error) {
 }
 
 // getCPUInformation gets information about the system
-func getCPUInformation() (extractor.ExtractorSection, error) {
-	info := extractor.ExtractorSection{}
+// TODO this is not used.
+func getCPUInformation() (plugin.PluginSection, error) {
+	info := plugin.PluginSection{}
 
-	// This really needs to be better, the hard part is that
-	// proc/cpuinfo is different between arm and others,
-	// and arm doesn't show physical/virtual cores
 	cores := runtime.NumCPU()
 
 	// This is a guess at best
@@ -137,8 +135,8 @@ func getCPUInformation() (extractor.ExtractorSection, error) {
 }
 
 // getProcessorInformation returns details about each processor
-func getProcessorInformation() (extractor.ExtractorSection, error) {
-	info := extractor.ExtractorSection{}
+func getProcessorInformation() (plugin.PluginSection, error) {
+	info := plugin.PluginSection{}
 
 	raw, err := os.ReadFile(CpuInfoFile)
 	if err != nil {

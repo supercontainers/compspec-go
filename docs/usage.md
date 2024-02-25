@@ -14,6 +14,7 @@ This generates the `bin/compspec` that you can use:
 ./bin/compspec
 ```
 ```console
+              
 ┏┏┓┏┳┓┏┓┏┏┓┏┓┏
 ┗┗┛┛┗┗┣┛┛┣┛┗ ┗
           ┛  ┛    
@@ -28,11 +29,16 @@ Commands:
 
   version  See the version of compspec
   extract  Run one or more extractors
+  list     List plugins and known sections
+  create   Create a compatibility artifact for the current host according to a
+            definition
+  match    Match a manifest of container images / artifact pairs against a set
+            of host fields
 
 Arguments:
 
   -h  --help  Print help information
-  -n  --name  One or more specific extractor plugin names
+  -n  --name  One or more specific plugins to target names
 ```
 
 ## Version
@@ -41,53 +47,58 @@ Arguments:
 $ ./bin/compspec version
 ```
 ```console
-⭐️ compspec version 0.1.0-draft
+⭐️ compspec version 0.1.1-draft
 ```
 
 I know, the star should not be there. Fight me.
 
 ## List
 
-The list command lists each extractor, and sections available for it.
+The list command lists plugins (extractors and creators), and sections available for extractors.
 
 ```bash
 $ ./bin/compspec list
 ```
 ```console
- Compatibility Plugins                                    
-                            TYPE       NAME     SECTION   
- generic kernel extractor                                 
-                            extractor  kernel   boot      
-                            extractor  kernel   config    
-                            extractor  kernel   modules   
-----------------------------------------------------------
- generic system extractor                                 
-                            extractor  system   processor 
-                            extractor  system   os        
-                            extractor  system   arch      
-                            extractor  system   memory    
-----------------------------------------------------------
- generic library extractor                                
-                            extractor  library  mpi       
-----------------------------------------------------------
- node feature discovery                                   
-                            extractor  nfd      cpu       
-                            extractor  nfd      kernel    
-                            extractor  nfd      local     
-                            extractor  nfd      memory    
-                            extractor  nfd      network   
-                            extractor  nfd      pci       
-                            extractor  nfd      storage   
-                            extractor  nfd      system    
-                            extractor  nfd      usb       
- TOTAL                                 4        17        
+ Compatibility Plugins                                     
+                            TYPE       NAME      SECTION   
+ creation plugins                                          
+                            creator    artifact            
+                            creator    cluster             
+-----------------------------------------------------------
+ generic kernel extractor                                  
+                            extractor  kernel    boot      
+                            extractor  kernel    config    
+                            extractor  kernel    modules   
+-----------------------------------------------------------
+ generic system extractor                                  
+                            extractor  system    processor 
+                            extractor  system    os        
+                            extractor  system    arch      
+                            extractor  system    memory    
+                            extractor  system    cpu       
+-----------------------------------------------------------
+ generic library extractor                                 
+                            extractor  library   mpi       
+-----------------------------------------------------------
+ node feature discovery                                    
+                            extractor  nfd       cpu       
+                            extractor  nfd       kernel    
+                            extractor  nfd       local     
+                            extractor  nfd       memory    
+                            extractor  nfd       network   
+                            extractor  nfd       pci       
+                            extractor  nfd       storage   
+                            extractor  nfd       system    
+                            extractor  nfd       usb       
+ TOTAL                                 6         20        
 ```
 
 Note that we will eventually add a description column - it's not really warranted yet!
 
 ## Create
 
-The create command handles two kinds of creation (sub-commands):
+The create command handles two kinds of creation (sub-commands). Each of these is currently linked to a creation plugin.
 
  - **artifact**: create a compatibility artifact to describe an environment or application
  - **nodes** create a json graph format summary of nodes (a directory with one or more extracted metadata JSON files with node metadata)

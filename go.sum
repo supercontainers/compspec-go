@@ -2,8 +2,8 @@ github.com/akamensky/argparse v1.4.0 h1:YGzvsTqCvbEZhL8zZu2AiA5nq805NZh75JNj4ajn
 github.com/akamensky/argparse v1.4.0/go.mod h1:S5kwC7IuDcEr5VeXtGPRVZ5o/FdhcMlQz4IZQuw64xA=
 github.com/containerd/log v0.1.0 h1:TCJt7ioM2cr/tfR8GPbGf9/VRAX8D2B4PjzCpfX540I=
 github.com/containerd/log v0.1.0/go.mod h1:VRRf09a7mHDIRezVKTRCrOq78v577GXq3bSa3EhrzVo=
-github.com/converged-computing/jsongraph-go v0.0.0-20231221142916-249fef6889b3 h1:frJJfyARuHmF2eohDCyltBLE6tRJKvA1shuS2aWQaf8=
-github.com/converged-computing/jsongraph-go v0.0.0-20231221142916-249fef6889b3/go.mod h1:+DhVyLXGVfBsfta4185jd33jqa94inshCcdvsXK2Irk=
+github.com/converged-computing/jsongraph-go v0.0.0-20240225004212-223ddffb7565 h1:ZwJngPrF1yvM4ZGEyoT1b8h5e0qUumOxeDZLN37pPTk=
+github.com/converged-computing/jsongraph-go v0.0.0-20240225004212-223ddffb7565/go.mod h1:+DhVyLXGVfBsfta4185jd33jqa94inshCcdvsXK2Irk=
 github.com/converged-computing/nfd-source v0.0.0-20240224025007-20d686e64926 h1:VZmgK3t4564vdHNpE//q6kuPlugOrojkDHP4Gqd4A1g=
 github.com/converged-computing/nfd-source v0.0.0-20240224025007-20d686e64926/go.mod h1:I15nBsQqBTUsc3A4a6cuQmZjQ8lYUZSZ2a7UAE5SZ3g=
 github.com/coreos/go-systemd/v22 v22.3.2 h1:D9/bQk5vlXQFZ6Kwuu6zaiXJ9oTPe68++AzAJc1DzSI=

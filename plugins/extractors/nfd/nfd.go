@@ -16,7 +16,7 @@ import (
 	_ "github.com/converged-computing/nfd-source/source/system"
 	_ "github.com/converged-computing/nfd-source/source/usb"
 
-	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/pkg/utils"
 )
 
@@ -69,6 +69,13 @@ func (e NFDExtractor) Description() string {
 	return ExtractorDescription
 }
 
+func (e NFDExtractor) Create(options map[string]string) error {
+	return nil
+}
+
+func (e NFDExtractor) IsCreator() bool   { return false }
+func (e NFDExtractor) IsExtractor() bool { return true }
+
 // Validate ensures that the sections provided are in the list we know
 func (e NFDExtractor) Validate() bool {
 	invalids, valid := utils.StringArrayIsSubset(e.sections, validSections)
@@ -79,10 +86,10 @@ func (e NFDExtractor) Validate() bool {
 }
 
 // Extract returns system metadata, for a set of named sections
-func (e NFDExtractor) Extract(interface{}) (extractor.ExtractorData, error) {
+func (e NFDExtractor) Extract(interface{}) (plugin.PluginData, error) {
 
-	sections := map[string]extractor.ExtractorSection{}
-	data := extractor.ExtractorData{}
+	sections := map[string]plugin.PluginSection{}
+	data := plugin.PluginData{}
 
 	// Get all registered feature sources
 	sources := source.GetAllFeatureSources()
@@ -105,7 +112,7 @@ func (e NFDExtractor) Extract(interface{}) (extractor.ExtractorData, error) {
 		// Create a new section for the <name> group
 		// For each of the below, "fs" is a feature set
 		// AttributeFeatureSet
-		section := extractor.ExtractorSection{}
+		section := plugin.PluginSection{}
 		features := discovery.GetFeatures()
 		for k, fs := range features.Attributes {
 			for fName, feature := range fs.Elements {
@@ -140,13 +147,13 @@ func (e NFDExtractor) Extract(interface{}) (extractor.ExtractorData, error) {
 }
 
 // NewPlugin validates and returns a new kernel plugin
-func NewPlugin(sections []string) (extractor.Extractor, error) {
+func NewPlugin(sections []string) (plugin.PluginInterface, error) {
 	if len(sections) == 0 {
 		sections = validSections
 	}
 	e := NFDExtractor{sections: sections}
 	if !e.Validate() {
-		return nil, fmt.Errorf("plugin %s is not valid\n", e.Name())
+		return nil, fmt.Errorf("plugin %s is not valid", e.Name())
 	}
 	return e, nil
 }

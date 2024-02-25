@@ -11,7 +11,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/compspec/compspec-go/pkg/extractor"
+	"github.com/compspec/compspec-go/pkg/plugin"
 )
 
 const (
@@ -124,8 +124,8 @@ func readOsRelease(prettyName string, vendor string) (string, error) {
 }
 
 // getOSInformation gets operating system level metadata
-func getOsInformation() (extractor.ExtractorSection, error) {
-	info := extractor.ExtractorSection{}
+func getOsInformation() (plugin.PluginSection, error) {
+	info := plugin.PluginSection{}
 
 	// Get the name, version, and vendor
 	name, version, vendor, err := parseOsRelease()
