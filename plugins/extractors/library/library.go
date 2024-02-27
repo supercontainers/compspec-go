@@ -33,12 +33,9 @@ func (e LibraryExtractor) Description() string {
 	return ExtractorDescription
 }
 
-func (e LibraryExtractor) Create(options map[string]string) error {
-	return nil
-}
-
-func (e LibraryExtractor) IsCreator() bool   { return false }
-func (e LibraryExtractor) IsExtractor() bool { return true }
+func (e LibraryExtractor) Create(plugin.PluginOptions) error { return nil }
+func (e LibraryExtractor) IsCreator() bool                   { return false }
+func (e LibraryExtractor) IsExtractor() bool                 { return true }
 
 // Validate ensures that the sections provided are in the list we know
 func (e LibraryExtractor) Validate() bool {

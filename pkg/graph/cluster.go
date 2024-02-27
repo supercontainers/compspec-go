@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/compspec/compspec-go/pkg/utils"
 	"github.com/converged-computing/jsongraph-go/jsongraph/metadata"
@@ -19,6 +20,9 @@ type ClusterGraph struct {
 
 	// Top level counter for node labels (JGF v2) that maps to ids (JGF v1)
 	nodeCounter int32
+
+	// Easy reference to root name
+	rootName string
 
 	// Counters for specific resource types (e.g., rack, node)
 	resourceCounters map[string]int32
@@ -41,7 +45,7 @@ func (c *ClusterGraph) SaveGraph(path string) error {
 		fmt.Printf("Graph %s already exists, will not overwrite\n", path)
 		return nil
 	}
-	content, err := json.MarshalIndent(c.Graph, "", "  ")
+	content, err := json.MarshalIndent(c, "", "  ")
 	if err != nil {
 		return err
 	}
@@ -55,10 +59,15 @@ func (c *ClusterGraph) SaveGraph(path string) error {
 
 // Path gets a new path
 func getNodePath(root, subpath string) string {
+	var path string
 	if subpath == "" {
-		return fmt.Sprintf("/%s", root)
+		path = fmt.Sprintf("/%s", root)
+	} else {
+		path = fmt.Sprintf("/%s/%s", root, subpath)
 	}
-	return fmt.Sprintf("/%s/%s", root, subpath)
+	// Hack to allow for imperfection of slash placement
+	path = strings.ReplaceAll(path, "//", "/")
+	return path
 }
 
 // AddNode adds a node to the graph
@@ -69,8 +78,9 @@ func (c *ClusterGraph) AddNode(
 	size int32,
 	exclusive bool,
 	unit string,
+	path string,
 ) *graph.Node {
-	node := c.getNode(resource, name, size, exclusive, unit)
+	node := c.getNode(resource, name, size, exclusive, unit, path)
 	c.Graph.Nodes[*node.Label] = *node
 	return node
 }
@@ -88,6 +98,7 @@ func (c *ClusterGraph) getNode(
 	size int32,
 	exclusive bool,
 	unit string,
+	path string,
 ) *graph.Node {
 
 	// Get the identifier for the resource type
@@ -101,16 +112,18 @@ func (c *ClusterGraph) getNode(
 
 	// The id in the metadata is the counter for that resource type
 	resourceCounter := fmt.Sprintf("%d", counter)
+	nameWithCount := fmt.Sprintf("%s%d", name, counter)
 
 	// The resource name is the type + the resource counter
-	resourceName := fmt.Sprintf("%s%d", name, counter)
+	// path should be assembled from parents up to this node
+	resourceName := fmt.Sprintf("%s/%s%d", path, name, counter)
 
 	// New Metadata with expected fluxion data
 	m := metadata.Metadata{}
 	m.AddElement("type", resource)
 	m.AddElement("basename", name)
 	m.AddElement("id", resourceCounter)
-	m.AddElement("name", resourceName)
+	m.AddElement("name", nameWithCount)
 
 	// uniq_id should be the same as the label, but as an integer
 	m.AddElement("uniq_id", count)
@@ -118,7 +131,7 @@ func (c *ClusterGraph) getNode(
 	m.AddElement("exclusive", exclusive)
 	m.AddElement("unit", unit)
 	m.AddElement("size", size)
-	m.AddElement("paths", map[string]string{"containment": getNodePath(name, "")})
+	m.AddElement("paths", map[string]string{"containment": getNodePath(c.rootName, resourceName)})
 
 	// Update the resource counter
 	counter += 1
@@ -154,7 +167,7 @@ func NewClusterGraph(name string) (ClusterGraph, error) {
 	m.AddElement("exclusive", false)
 	m.AddElement("unit", "")
 	m.AddElement("size", 1)
-	m.AddElement("paths", map[string]string{"containment": getNodePath(name, "")})
+	m.AddElement("paths", map[string]string{"containment": getNodePath(clusterName, "")})
 
 	// Root cluster node
 	label := "0"
@@ -166,7 +179,7 @@ func NewClusterGraph(name string) (ClusterGraph, error) {
 	// Create a new cluster!
 	// Start counting at 1 - index 0 is the cluster root
 	resourceCounters := map[string]int32{"cluster": int32(1)}
-	cluster := ClusterGraph{g, name, 1, resourceCounters}
+	cluster := ClusterGraph{g, name, 1, clusterName, resourceCounters}
 
 	return cluster, nil
 }

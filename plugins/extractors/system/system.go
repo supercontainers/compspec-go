@@ -39,12 +39,9 @@ func (e SystemExtractor) Sections() []string {
 	return e.sections
 }
 
-func (e SystemExtractor) Create(options map[string]string) error {
-	return nil
-}
-
-func (e SystemExtractor) IsCreator() bool   { return false }
-func (e SystemExtractor) IsExtractor() bool { return true }
+func (e SystemExtractor) Create(plugin.PluginOptions) error { return nil }
+func (e SystemExtractor) IsCreator() bool                   { return false }
+func (e SystemExtractor) IsExtractor() bool                 { return true }
 
 // Validate ensures that the sections provided are in the list we know
 func (e SystemExtractor) Validate() bool {

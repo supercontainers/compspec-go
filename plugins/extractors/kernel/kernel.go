@@ -27,11 +27,9 @@ func (e KernelExtractor) Description() string {
 	return ExtractorDescription
 }
 
-func (e KernelExtractor) Create(options map[string]string) error {
-	return nil
-}
-func (e KernelExtractor) IsCreator() bool   { return false }
-func (e KernelExtractor) IsExtractor() bool { return true }
+func (e KernelExtractor) Create(plugin.PluginOptions) error { return nil }
+func (e KernelExtractor) IsCreator() bool                   { return false }
+func (e KernelExtractor) IsExtractor() bool                 { return true }
 
 func (e KernelExtractor) Sections() []string {
 	return e.sections

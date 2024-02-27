@@ -24,7 +24,16 @@ type PluginInterface interface {
 	Sections() []string
 
 	// Creators take a map of named options
-	Create(map[string]string) error
+	Create(PluginOptions) error
+}
+
+// PluginOptions allow packaging named values of different types
+// This is an alternative to using interfaces.
+type PluginOptions struct {
+	BoolOpts map[string]bool
+	StrOpts  map[string]string
+	IntOpts  map[string]int32
+	ListOpts map[string][]string
 }
 
 // ExtractorData is returned by an extractor

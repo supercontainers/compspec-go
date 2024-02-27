@@ -44,5 +44,5 @@ compspec extract --name library --name nfd[cpu,memory,network,storage,system] --
 Now we are going to give compspec the directory, and ask it to create nodes. This will be in JSON graph format. This outputs to the terminal:
 
 ```bash
-compspec create nodes --cluster-name cluster-red --node-dir ./docs/rainbow/cluster/
+compspec create nodes --cluster-name cluster-red --node-dir ./docs/rainbow/cluster/ --nodes-output ./cluster-nodes.json
 ```

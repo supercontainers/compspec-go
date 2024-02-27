@@ -3,7 +3,6 @@ package artifact
 import (
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/pkg/types"
@@ -37,21 +36,16 @@ func (c ArtifactCreator) IsCreator() bool   { return true }
 func (c ArtifactCreator) IsExtractor() bool { return false }
 
 // Create generates the desired output
-func (c ArtifactCreator) Create(options map[string]string) error {
+func (c ArtifactCreator) Create(options plugin.PluginOptions) error {
 
 	// unwrap options (we can be sure they are at least provided)
-	specname := options["specname"]
-	saveto := options["saveto"]
-	fieldsCombined := options["fields"]
-	fields := strings.Split(fieldsCombined, "||")
+	specname := options.StrOpts["specname"]
+	saveto := options.StrOpts["saveto"]
+	fields := options.ListOpts["fields"]
 
 	// This is uber janky. We could use interfaces
 	// But I just feel so lazy right now
-	allowFailFlag := options["allowFail"]
-	allowFail := false
-	if allowFailFlag == "true" {
-		allowFail = true
-	}
+	allowFail := options.BoolOpts["allowFail"]
 
 	// Cut out early if a spec not provided
 	if specname == "" {
