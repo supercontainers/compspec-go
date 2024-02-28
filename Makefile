@@ -1,5 +1,8 @@
 HERE ?= $(shell pwd)
 LOCALBIN ?= $(shell pwd)/bin
+LIBDIR ?= "/usr/lib64"
+
+BUILDENVVAR=CGO_LDFLAGS="-lhwloc -lstdc++ -L${LIBDIR}"
 
 .PHONY: all
 
@@ -10,10 +13,10 @@ $(LOCALBIN):
 	mkdir -p $(LOCALBIN)
 	
 build: $(LOCALBIN)
-	GO111MODULE="on" go build -o $(LOCALBIN)/compspec cmd/compspec/compspec.go
+	$(BUILDENVVAR) GO111MODULE="on" go build -ldflags '-w' -o $(LOCALBIN)/compspec cmd/compspec/compspec.go
 
 build-arm: $(LOCALBIN)
-	GO111MODULE="on" GOARCH=arm64 go build -o $(LOCALBIN)/compspec-arm cmd/compspec/compspec.go
+	$(BUILDENVVAR) GO111MODULE="on" GOARCH=arm64 go build -ldflags '-w' -o $(LOCALBIN)/compspec-arm cmd/compspec/compspec.go
 
 build-ppc: $(LOCALBIN)
-	GO111MODULE="on" GOARCH=ppc64le go build -o $(LOCALBIN)/compspec-ppc cmd/compspec/compspec.go
+	$(BUILDENVVAR) GO111MODULE="on" GOARCH=ppc64le go build -ldflags '-w' -o $(LOCALBIN)/compspec-ppc cmd/compspec/compspec.go

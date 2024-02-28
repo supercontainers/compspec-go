@@ -8,6 +8,7 @@ import (
 
 	"github.com/compspec/compspec-go/pkg/plugin"
 	"github.com/compspec/compspec-go/pkg/utils"
+	hwloc "github.com/researchapps/go-hwloc"
 )
 
 const (
@@ -132,6 +133,24 @@ func getCPUInformation() (plugin.PluginSection, error) {
 	//info["logical.cpus"] = fmt.Sprintf("%d", stat.NumCPU())
 	//info["physical.cpus"] = fmt.Sprintf("%d", stat.NumPhysicalCPU())
 	//info["cores"] = fmt.Sprintf("%d", stat.NumCore())
+	return info, nil
+}
+
+func getHWLOC() (plugin.PluginSection, error) {
+	info := plugin.PluginSection{}
+	topo, err := hwloc.NewTopology()
+	if err != nil {
+		return info, err
+	}
+	err = topo.Load()
+	if err != nil {
+		return info, err
+	}
+	nodes := topo.HwlocGetNUMANodeObjByOSIndex(0)
+	fmt.Println(nodes)
+	//	nodeSet := topo.HwlocGetNUMANodeObjByOSIndex(0)
+	//	topo.HwlocSetMemBind(nodeSet, hwloc.HwlocMemBindBind, hwloc.HwlocMemBindThread|hwloc.HwlocMemBindByNodeSet)
+	//	fmt.Println(nodeSet)
 	return info, nil
 }
 

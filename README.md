@@ -18,6 +18,11 @@ Note that for development we are using nfd-source that does not require kubernet
 
 ```bash
 go get -u github.com/converged-computing/nfd-source/source@0.0.1
+# first one
+go get -u github.com/researchapps/go-hwloc@5dbf06a64b468bb4fcec633a12b8e268aacce511
+
+# second one
+go get -u github.com/researchapps/go-hwloc@41f6840ad032fa5000bddacacecaeec65d9768c1 
 ```
 
 There is some bug with installing the traditional way that I can look into later:

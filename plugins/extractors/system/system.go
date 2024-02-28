@@ -17,10 +17,11 @@ const (
 	ArchSection      = "arch"
 	OsSection        = "os"
 	MemorySection    = "memory"
+	HWLOC            = "hwloc"
 )
 
 var (
-	validSections = []string{ProcessorSection, OsSection, ArchSection, MemorySection, CPUSection}
+	validSections = []string{ProcessorSection, OsSection, ArchSection, MemorySection, CPUSection, HWLOC}
 )
 
 type SystemExtractor struct {
@@ -73,6 +74,13 @@ func (e SystemExtractor) Extract(allowFail bool) (plugin.PluginData, error) {
 				return data, err
 			}
 			sections[OsSection] = section
+		}
+		if name == HWLOC {
+			section, err := getHWLOC()
+			if err != nil {
+				return data, err
+			}
+			sections[HWLOC] = section
 		}
 
 		if name == CPUSection {

@@ -18,6 +18,10 @@ RUN apt-get update && \
         curl \ 
         less \
         git \
+        locales \
+        autoconf \
+        libtool \
+        automake \
         build-essential \
         protobuf-compiler \
         ca-certificates
@@ -28,6 +32,14 @@ ENV PATH=$PATH:/workspaces/compspec-go/bin
 
 RUN wget --no-check-certificate https://go.dev/dl/go1.21.7.linux-amd64.tar.gz && tar -xvf go1.21.7.linux-amd64.tar.gz && \
          mv go /usr/local && rm go1.21.7.linux-amd64.tar.gz
+
+# Install hwloc
+RUN git clone https://github.com/open-mpi/hwloc /opt/hwloc && \
+    cd /opt/hwloc && \
+    ./autogen.sh && \
+    ./configure && \
+    make LDFLAGS=-all-static && \
+    make install && ldconfig /usr/local/lib
 
 ENV PATH=$PATH:/usr/local/go/bin:/home/vscode/go/bin
 
