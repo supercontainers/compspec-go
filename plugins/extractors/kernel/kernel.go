@@ -52,7 +52,7 @@ func (c KernelExtractor) Validate() bool {
 
 // Extract returns kernel metadata, for a set of named sections
 // TODO eventually the user could select which sections they want
-func (c KernelExtractor) Extract(interface{}) (plugin.PluginData, error) {
+func (c KernelExtractor) Extract(allowFail bool) (plugin.PluginData, error) {
 
 	sections := map[string]plugin.PluginSection{}
 	data := plugin.PluginData{}
@@ -63,7 +63,7 @@ func (c KernelExtractor) Extract(interface{}) (plugin.PluginData, error) {
 		// Boot!
 		if name == KernelBootSection {
 			section, err := getKernelBootParams()
-			if err != nil {
+			if err != nil && !allowFail {
 				return data, err
 			}
 			sections[KernelBootSection] = section
@@ -72,7 +72,7 @@ func (c KernelExtractor) Extract(interface{}) (plugin.PluginData, error) {
 		// Kernel full config file
 		if name == KernelConfigSection {
 			section, err := getKernelBootConfig()
-			if err != nil {
+			if err != nil && !allowFail {
 				return data, err
 			}
 			sections[KernelConfigSection] = section
@@ -81,7 +81,7 @@ func (c KernelExtractor) Extract(interface{}) (plugin.PluginData, error) {
 		// Kernel full config file
 		if name == KernelModulesSection {
 			section, err := getKernelModules()
-			if err != nil {
+			if err != nil && !allowFail {
 				return data, err
 			}
 			sections[KernelModulesSection] = section

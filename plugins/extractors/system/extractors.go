@@ -80,6 +80,8 @@ var (
 // CPU part        : 0xd40
 // CPU revision    : 1
 
+// See https://github.com/randombit/cpuinfo/blob/master/ppc/power8 for other processors
+
 // Get architecture is akin to model?
 func getCpuArchitecture(p map[string]string) (string, error) {
 	return utils.LookupValue(p, "cpu_family", "cpu_architecture")
@@ -99,7 +101,6 @@ func getCpuVendor(p map[string]string) (string, error) {
 	}
 	vendorName, ok := armVendors[vendor]
 	if !ok {
-		fmt.Printf("Warning: cannot find vendor name for %s, will return raw value\n", vendor)
 		return vendor, nil
 	}
 	return vendorName, nil
@@ -149,6 +150,10 @@ func getProcessorInformation() (plugin.PluginSection, error) {
 	processors := []map[string]string{}
 	current := map[string]string{}
 
+	// Only PPC cpuinfo has timebase
+	ppcFields := map[string]string{}
+	isPPC := strings.Contains(string(raw), "timebase")
+
 	// We need custom parsing, the sections per processor are split by newlines
 	for _, line := range lines {
 		line = strings.Trim(line, " ")
@@ -166,13 +171,20 @@ func getProcessorInformation() (plugin.PluginSection, error) {
 
 			// Replace spaces with _. Not sure if this is a good idea, but I don't like spaces
 			key = strings.ToLower(strings.ReplaceAll(key, " ", "_"))
+
+			// Is it a more global ppc field?
+			if isPPC && key != "processor" {
+				ppcFields[key] = value
+				continue
+			}
+
 			if value != "" {
 				current[key] = value
 			}
 		}
 	}
 
-	// Create common features for each processor. Note we might want to separate this into a separate
+	// Create common features for each processor, but also allow all fields as is
 	for i, p := range processors {
 		uid, ok := p["processor"]
 		if !ok {
@@ -186,12 +198,12 @@ func getProcessorInformation() (plugin.PluginSection, error) {
 		if err != nil {
 			return info, err
 		}
-		info[uid+"vendor"] = vendor
+		info[uid+"normalized.vendor"] = vendor
 
 		// bogompis should be the same after lowercase
 		bogomips, ok := p["bogomips"]
 		if ok {
-			info[uid+"botomips"] = bogomips
+			info[uid+"normalized.botomips"] = bogomips
 		}
 
 		// features or flags
@@ -199,19 +211,27 @@ func getProcessorInformation() (plugin.PluginSection, error) {
 		if err != nil {
 			return info, err
 		}
-		info[uid+"features"] = fmt.Sprintf("%s", features)
+		info[uid+"normalized.features"] = features
 
 		family, err := getCpuArchitecture(p)
 		if err != nil {
 			return info, err
 		}
-		info[uid+"family"] = fmt.Sprintf("%s", family)
+		info[uid+"normalized.family"] = family
 
 		variant, err := getCpuVariant(p)
 		if err != nil {
 			return info, err
 		}
-		info[uid+"model"] = fmt.Sprintf("%s", variant)
+		info[uid+"normalized.model"] = variant
+		if isPPC {
+			for key, value := range ppcFields {
+				info[uid+key] = value
+			}
+		}
+		for key, value := range p {
+			info[uid+"raw."+key] = value
+		}
 
 	}
 	return info, nil

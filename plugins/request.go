@@ -29,7 +29,8 @@ func (r *PluginsRequest) Extract(allowFail bool) (pg.Result, error) {
 		if !p.Plugin.IsExtractor() {
 			continue
 		}
-		r, err := p.Plugin.Extract(p.Sections)
+		// We can allow failure on the level of the sections
+		r, err := p.Plugin.Extract(allowFail)
 
 		// We can allow failure
 		if err != nil && !allowFail {
