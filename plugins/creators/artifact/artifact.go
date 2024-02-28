@@ -29,7 +29,7 @@ func (c ArtifactCreator) Sections() []string {
 	return []string{}
 }
 
-func (c ArtifactCreator) Extract(interface{}) (plugin.PluginData, error) {
+func (c ArtifactCreator) Extract(allowFail bool) (plugin.PluginData, error) {
 	return plugin.PluginData{}, nil
 }
 func (c ArtifactCreator) IsCreator() bool   { return true }

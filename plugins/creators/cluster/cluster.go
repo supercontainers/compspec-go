@@ -31,7 +31,7 @@ func (c ClusterCreator) Sections() []string {
 	return []string{}
 }
 
-func (c ClusterCreator) Extract(interface{}) (plugin.PluginData, error) {
+func (c ClusterCreator) Extract(allowFail bool) (plugin.PluginData, error) {
 	return plugin.PluginData{}, nil
 }
 func (c ClusterCreator) IsCreator() bool   { return true }

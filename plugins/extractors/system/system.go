@@ -53,7 +53,7 @@ func (e SystemExtractor) Validate() bool {
 }
 
 // Extract returns system metadata, for a set of named sections
-func (e SystemExtractor) Extract(interface{}) (plugin.PluginData, error) {
+func (e SystemExtractor) Extract(allowFail bool) (plugin.PluginData, error) {
 
 	sections := map[string]plugin.PluginSection{}
 	data := plugin.PluginData{}
@@ -62,14 +62,14 @@ func (e SystemExtractor) Extract(interface{}) (plugin.PluginData, error) {
 	for _, name := range e.sections {
 		if name == ProcessorSection {
 			section, err := getProcessorInformation()
-			if err != nil {
+			if err != nil && !allowFail {
 				return data, err
 			}
 			sections[ProcessorSection] = section
 		}
 		if name == OsSection {
 			section, err := getOsInformation()
-			if err != nil {
+			if err != nil && !allowFail {
 				return data, err
 			}
 			sections[OsSection] = section
@@ -77,14 +77,14 @@ func (e SystemExtractor) Extract(interface{}) (plugin.PluginData, error) {
 
 		if name == CPUSection {
 			section, err := getCPUInformation()
-			if err != nil {
+			if err != nil && !allowFail {
 				return data, err
 			}
 			sections[CPUSection] = section
 		}
 		if name == ArchSection {
 			section, err := getArchInformation()
-			if err != nil {
+			if err != nil && !allowFail {
 				return data, err
 			}
 			sections[ArchSection] = section
@@ -92,7 +92,7 @@ func (e SystemExtractor) Extract(interface{}) (plugin.PluginData, error) {
 
 		if name == MemorySection {
 			section, err := getMemoryInformation()
-			if err != nil {
+			if err != nil && !allowFail {
 				return data, err
 			}
 			sections[MemorySection] = section

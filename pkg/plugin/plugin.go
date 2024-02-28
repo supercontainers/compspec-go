@@ -19,7 +19,7 @@ type PluginInterface interface {
 	IsCreator() bool
 
 	// Extractors
-	Extract(interface{}) (PluginData, error)
+	Extract(bool) (PluginData, error)
 	Validate() bool
 	Sections() []string
 

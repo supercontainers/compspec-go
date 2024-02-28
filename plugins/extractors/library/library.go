@@ -47,7 +47,7 @@ func (e LibraryExtractor) Validate() bool {
 }
 
 // Extract returns library metadata, for a set of named sections
-func (e LibraryExtractor) Extract(interface{}) (plugin.PluginData, error) {
+func (e LibraryExtractor) Extract(allowFail bool) (plugin.PluginData, error) {
 
 	sections := map[string]plugin.PluginSection{}
 	data := plugin.PluginData{}
@@ -56,7 +56,7 @@ func (e LibraryExtractor) Extract(interface{}) (plugin.PluginData, error) {
 	for _, name := range e.sections {
 		if name == MPISection {
 			section, err := getMPIInformation()
-			if err != nil {
+			if err != nil && !allowFail {
 				return data, err
 			}
 			sections[MPISection] = section

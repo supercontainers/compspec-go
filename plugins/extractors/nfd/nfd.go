@@ -83,7 +83,7 @@ func (e NFDExtractor) Validate() bool {
 }
 
 // Extract returns system metadata, for a set of named sections
-func (e NFDExtractor) Extract(interface{}) (plugin.PluginData, error) {
+func (e NFDExtractor) Extract(allowFail bool) (plugin.PluginData, error) {
 
 	sections := map[string]plugin.PluginSection{}
 	data := plugin.PluginData{}
@@ -97,7 +97,7 @@ func (e NFDExtractor) Extract(interface{}) (plugin.PluginData, error) {
 
 		// This should not happen
 		if !ok {
-			fmt.Printf("%s is not a known feature source %s\n", name)
+			fmt.Printf("%s is not a known feature source\n", name)
 			continue
 		}
 		err := discovery.Discover()
