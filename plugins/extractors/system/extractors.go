@@ -195,10 +195,9 @@ func getProcessorInformation() (plugin.PluginSection, error) {
 
 		// Parse cpu vendor - arm has a lookup
 		vendor, err := getCpuVendor(p)
-		if err != nil {
-			return info, err
+		if err == nil {
+			info[uid+"normalized.vendor"] = vendor
 		}
-		info[uid+"normalized.vendor"] = vendor
 
 		// bogompis should be the same after lowercase
 		bogomips, ok := p["bogomips"]
@@ -208,24 +207,24 @@ func getProcessorInformation() (plugin.PluginSection, error) {
 
 		// features or flags
 		features, err := getCpuFeatures(p)
-		if err != nil {
-			return info, err
+		if err == nil {
+			info[uid+"normalized.features"] = features
 		}
-		info[uid+"normalized.features"] = features
 
 		family, err := getCpuArchitecture(p)
-		if err != nil {
-			return info, err
+		if err == nil {
+			info[uid+"normalized.family"] = family
 		}
-		info[uid+"normalized.family"] = family
 
 		variant, err := getCpuVariant(p)
-		if err != nil {
-			return info, err
+		if err == nil {
+			info[uid+"normalized.model"] = variant
 		}
-		info[uid+"normalized.model"] = variant
 		if isPPC {
 			for key, value := range ppcFields {
+				if key == "model" {
+					key = "normalized.model"
+				}
 				info[uid+key] = value
 			}
 		}
