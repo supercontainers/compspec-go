@@ -116,7 +116,7 @@ func (c *ClusterGraph) getNode(
 
 	// The resource name is the type + the resource counter
 	// path should be assembled from parents up to this node
-	resourceName := fmt.Sprintf("%s/%s%d", path, name, counter)
+	resourceName := fmt.Sprintf("%s/%s", path, nameWithCount)
 
 	// New Metadata with expected fluxion data
 	m := metadata.Metadata{}
