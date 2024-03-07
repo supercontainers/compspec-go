@@ -16,7 +16,7 @@ import (
 type ClusterGraph struct {
 	*jgf.JsonGraph
 
-	Name string
+	Name string `json:"name,omitempty" yaml:"name,omitempty" mapstructure:"name,omitempty"`
 
 	// Top level counter for node labels (JGF v2) that maps to ids (JGF v1)
 	nodeCounter int32
