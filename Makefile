@@ -2,7 +2,7 @@ HERE ?= $(shell pwd)
 LOCALBIN ?= $(shell pwd)/bin
 LIBDIR ?= "/usr/lib64"
 
-BUILDENVVAR=CGO_LDFLAGS="-lhwloc -lstdc++ -L${LIBDIR}"
+BUILDENVVAR=CGO_CFLAGS="-I/usr/local/include" CGO_LDFLAGS="-lhwloc -lstdc++ -L${LIBDIR}"
 
 .PHONY: all
 

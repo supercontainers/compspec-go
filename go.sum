@@ -42,8 +42,8 @@ github.com/opencontainers/runtime-spec v1.0.3-0.20210326190908-1c3f411f0417 h1:3
 github.com/opencontainers/runtime-spec v1.0.3-0.20210326190908-1c3f411f0417/go.mod h1:jwyrGlmzljRJv/Fgzds9SsS/C5hL+LL3ko9hs6T5lQ0=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
-github.com/researchapps/go-hwloc v0.0.0-20240228150433-41f6840ad032 h1:d3QnHoBVxmoljPqsblS35tjTdBGW9CueLMB9J45BsGI=
-github.com/researchapps/go-hwloc v0.0.0-20240228150433-41f6840ad032/go.mod h1:ymkBlEUa/6YhbZpUnCdOU4Ox/O2VJvNqxDiiBV2vkmU=
+github.com/researchapps/go-hwloc v0.0.0-20240229164659-54eddf66e3b2 h1:PS4our7R+igzTVh/G7LOIYQwqYqcMR1kPRrI6KOGOoU=
+github.com/researchapps/go-hwloc v0.0.0-20240229164659-54eddf66e3b2/go.mod h1:y/f4FyhiR/6p3EQUaaWkzuj5AFJg1K9lBpcBL+u20OQ=
 github.com/rivo/uniseg v0.2.0 h1:S1pD9weZBuJdFmowNwbpi7BJ8TNftyUImj/0WQi72jY=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/scylladb/go-set v1.0.2 h1:SkvlMCKhP0wyyct6j+0IHJkBkSZL+TDzZ4E7f7BCcRE=

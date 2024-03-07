@@ -146,8 +146,16 @@ func getHWLOC() (plugin.PluginSection, error) {
 	if err != nil {
 		return info, err
 	}
-	nodes := topo.HwlocGetNUMANodeObjByOSIndex(0)
-	fmt.Println(nodes)
+	nodeSet := topo.HwlocGetNUMANodeObjByOSIndex(0)
+	topo.HwlocSetMemBind(nodeSet, hwloc.HwlocMemBindBind, hwloc.HwlocMemBindThread|hwloc.HwlocMemBindByNodeSet)
+	nodes, err := nodeSet.Values()
+	if err != nil {
+		return info, err
+	}
+	for _, node := range nodes {
+		fmt.Println(node)
+	}
+
 	//	nodeSet := topo.HwlocGetNUMANodeObjByOSIndex(0)
 	//	topo.HwlocSetMemBind(nodeSet, hwloc.HwlocMemBindBind, hwloc.HwlocMemBindThread|hwloc.HwlocMemBindByNodeSet)
 	//	fmt.Println(nodeSet)

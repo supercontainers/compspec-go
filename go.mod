@@ -11,7 +11,7 @@ require (
 	github.com/jedib0t/go-pretty/v6 v6.5.4
 	github.com/moby/moby v25.0.3+incompatible
 	github.com/opencontainers/image-spec v1.1.0
-	github.com/researchapps/go-hwloc v0.0.0-20240228150433-41f6840ad032
+	github.com/researchapps/go-hwloc v0.0.0-20240229164659-54eddf66e3b2
 	github.com/scylladb/go-set v1.0.2
 	golang.org/x/sys v0.16.0
 	oras.land/oras-go/v2 v2.4.0
