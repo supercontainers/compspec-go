@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/akamensky/argparse v1.4.0
-	github.com/converged-computing/jsongraph-go v0.0.0-20240225004212-223ddffb7565
+	github.com/converged-computing/jsongraph-go v0.0.0-20240229082022-c6887a5a00fe
 	github.com/converged-computing/nfd-source v0.0.0-20240224025007-20d686e64926
 	github.com/jedib0t/go-pretty/v6 v6.5.4
 	github.com/moby/moby v25.0.3+incompatible

@@ -148,6 +148,14 @@ func (c ClusterCreator) Create(options plugin.PluginOptions) error {
 		// First add the rack -> node
 		// We only have one rack here, so hard coded id for now
 		node := *g.AddNode("node", "node", 1, false, "", "rack0")
+		nodeName, err := node.Metadata.GetStringElement("name")
+
+		// This should not happen, we just added it!
+		if err != nil {
+			fmt.Printf("node %s cannot derive name, skipping\n", nodeFile)
+			continue
+		}
+
 		g.AddEdge(rack, node, "contains")
 		g.AddEdge(node, rack, "in")
 
@@ -181,14 +189,22 @@ func (c ClusterCreator) Create(options plugin.PluginOptions) error {
 
 			// Create each socket attached to the node
 			// rack -> node -> socket
-			path := fmt.Sprintf("rack0/node%s", *node.Label)
+			path := fmt.Sprintf("rack0/%s", nodeName)
 			socketNode := *g.AddNode("socket", "socket", 1, false, "", path)
+			socketName, err := socketNode.Metadata.GetStringElement("name")
+
+			// This also is not going to happen
+			if err != nil {
+				fmt.Printf("socket %x cannot derive name, skipping\n", socketNode)
+				continue
+			}
+
 			g.AddEdge(node, socketNode, "contains")
 			g.AddEdge(socketNode, node, "in")
 
 			// Create each core attached to the socket
-			for _, _ = range chunk {
-				path := fmt.Sprintf("rack0/node%s/socket%s", *node.Label, *socketNode.Label)
+			for range chunk {
+				path := fmt.Sprintf("rack0/%s/%s", nodeName, socketName)
 				coreNode := *g.AddNode("core", "core", 1, false, "", path)
 				g.AddEdge(socketNode, coreNode, "contains")
 				g.AddEdge(coreNode, socketNode, "in")
